@@ -21,6 +21,8 @@ namespace NguyenHoangSon_NET1707_A02.Pages.BookingReservations
 
         public BookingReservation BookingReservation { get; set; } = default!;
 
+        public IList<BookingDetail> BookingDetail { get; set; } = default!;
+
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null)
@@ -28,7 +30,9 @@ namespace NguyenHoangSon_NET1707_A02.Pages.BookingReservations
                 return NotFound();
             }
 
-            var bookingreservation = await _context.BookingReservations.Include(m => m.Customer).FirstOrDefaultAsync(m => m.BookingReservationId == id);
+            var bookingreservation = await _context.BookingReservations
+                .Include(m => m.Customer)
+                .FirstOrDefaultAsync(m => m.BookingReservationId == id);
             if (bookingreservation == null)
             {
                 return NotFound();
@@ -36,6 +40,9 @@ namespace NguyenHoangSon_NET1707_A02.Pages.BookingReservations
             else
             {
                 BookingReservation = bookingreservation;
+                BookingDetail = await _context.BookingDetails.Where(m => m.BookingReservationId == bookingreservation.BookingReservationId)
+                .Include(b => b.BookingReservation)
+                .Include(b => b.Room).ToListAsync();
             }
             return Page();
         }

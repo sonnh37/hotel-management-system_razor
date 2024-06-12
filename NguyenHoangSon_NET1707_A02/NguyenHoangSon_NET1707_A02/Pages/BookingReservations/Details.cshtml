@@ -40,9 +40,55 @@
             @Html.DisplayNameFor(model => model.BookingReservation.Customer)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.BookingReservation.Customer.CustomerId)
+            @Html.DisplayFor(model => model.BookingReservation.Customer.CustomerFullName)
         </dd>
     </dl>
+    <br/>
+
+    <h5>BookingDetail List</h5>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.BookingDetail[0].StartDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.BookingDetail[0].EndDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.BookingDetail[0].ActualPrice)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.BookingDetail[0].BookingReservation.BookingDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.BookingDetail[0].Room.RoomNumber)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.BookingDetail)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StartDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EndDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ActualPrice)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.BookingReservation.BookingDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Room.RoomNumber)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
 <div>
     <a asp-page="./Edit" asp-route-id="@Model.BookingReservation.BookingReservationId">Edit</a> |
