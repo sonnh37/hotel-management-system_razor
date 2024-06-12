@@ -14,6 +14,6 @@
 
         public IList<BookingDetailView> BookingDetails { get; set; } = new List<BookingDetailView>();
 
-        public CustomerView Customer { get; set; } = null!;
+        public CustomerView? Customer { get; set; }
     }
 }

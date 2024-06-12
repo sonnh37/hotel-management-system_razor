@@ -10,7 +10,7 @@ using NguyenHoangSon_NET1707_A02.Data;
 using NguyenHoangSon_NET1707_A02.Models;
 using NguyenHoangSon_NET1707_A02.Models.Views;
 
-namespace NguyenHoangSon_NET1707_A02.Pages.Customers
+namespace NguyenHoangSon_NET1707_A02.Pages.BookingReservations
 {
     public class CreateModel : PageModel
     {
@@ -25,11 +25,12 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Customers
 
         public IActionResult OnGet()
         {
+            ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerFullName");
             return Page();
         }
 
         [BindProperty]
-        public CustomerView Customer { get; set; } = default!;
+        public BookingReservationView BookingReservation { get; set; } = default!;
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
@@ -38,8 +39,11 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Customers
             {
                 return Page();
             }
+            // count + 1
 
-            _context.Customers.Add(_mapper.Map<Customer>(Customer));
+            BookingReservation.BookingReservationId = _context.BookingReservations.Count() + 1;
+
+            _context.BookingReservations.Add(_mapper.Map<BookingReservation>(BookingReservation));
             await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");

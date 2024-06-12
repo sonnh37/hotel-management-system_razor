@@ -2,31 +2,35 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NguyenHoangSon_NET1707_A02.Data;
 using NguyenHoangSon_NET1707_A02.Models;
+using NguyenHoangSon_NET1707_A02.Models.Views;
 
 namespace NguyenHoangSon_NET1707_A02.Pages.RoomInformations
 {
     public class CreateModel : PageModel
     {
-        private readonly NguyenHoangSon_NET1707_A02.Data.FuminiHotelManagementContext _context;
+        private readonly FuminiHotelManagementContext _context;
+        private readonly IMapper _mapper;
 
-        public CreateModel(NguyenHoangSon_NET1707_A02.Data.FuminiHotelManagementContext context)
+        public CreateModel(FuminiHotelManagementContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public IActionResult OnGet()
         {
-        ViewData["RoomTypeName"] = new SelectList(_context.RoomTypes, "RoomTypeId", "RoomTypeName");
+            ViewData["RoomTypeId"] = new SelectList(_context.RoomTypes, "RoomTypeId", "RoomTypeName");
             return Page();
         }
 
         [BindProperty]
-        public RoomInformation RoomInformation { get; set; } = default!;
+        public RoomInformationView RoomInformation { get; set; } = default!;
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
@@ -36,7 +40,7 @@ namespace NguyenHoangSon_NET1707_A02.Pages.RoomInformations
                 return Page();
             }
 
-            _context.RoomInformations.Add(RoomInformation);
+            _context.RoomInformations.Add(_mapper.Map<RoomInformation>(RoomInformation));
             await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");

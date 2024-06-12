@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using NguyenHoangSon_NET1707_A02.Data;
 using NguyenHoangSon_NET1707_A02.Models;
 
-namespace NguyenHoangSon_NET1707_A02.Pages.Customers
+namespace NguyenHoangSon_NET1707_A02.Pages.BookingReservations
 {
     public class DeleteModel : PageModel
     {
@@ -20,7 +20,7 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Customers
         }
 
         [BindProperty]
-        public Customer Customer { get; set; } = default!;
+        public BookingReservation BookingReservation { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -29,15 +29,15 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Customers
                 return NotFound();
             }
 
-            var customer = await _context.Customers.FirstOrDefaultAsync(m => m.CustomerId == id);
+            var bookingreservation = await _context.BookingReservations.Include(m => m.Customer).FirstOrDefaultAsync(m => m.BookingReservationId == id);
 
-            if (customer == null)
+            if (bookingreservation == null)
             {
                 return NotFound();
             }
             else
             {
-                Customer = customer;
+                BookingReservation = bookingreservation;
             }
             return Page();
         }
@@ -49,12 +49,12 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Customers
                 return NotFound();
             }
 
-            var customer = await _context.Customers.FindAsync(id);
-            if (customer != null)
+            var bookingreservation = await _context.BookingReservations.FindAsync(id);
+            if (bookingreservation != null)
             {
-                Customer = customer;
-                Customer.CustomerStatus = Convert.ToByte(2);
-                _context.Customers.Update(Customer);
+                BookingReservation = bookingreservation;
+                BookingReservation.BookingStatus = Convert.ToByte(2);
+                _context.BookingReservations.Update(BookingReservation);
                 await _context.SaveChangesAsync();
             }
 
