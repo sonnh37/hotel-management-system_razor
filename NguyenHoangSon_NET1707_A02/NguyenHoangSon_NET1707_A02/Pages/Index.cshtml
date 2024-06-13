@@ -4,9 +4,24 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <img src="images/logo.png" style="height: 150px; width: 278px" />
-    <h1 class="display-4">FU Mini Hotel</h1>
-    <p>Welcome to Mini Hotel FPT University</p>
-    
-</div>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"]</title>
+</head>
+<body>
+    <div class="text-center">
+        @if (HttpContext.Session.GetString("Username") != null)
+        {
+            <img src="images/logo.png" style="height: 150px; width: 278px" />
+            <h1 class="display-4">FU Mini Hotel</h1>
+            <p>Welcome to Mini Hotel FPT University</p>
+        }
+        else
+        {
+            <h1 class="display-4">FU Mini Hotel</h1>
+            <p>Please <a href="/Auths/Login">log in</a> to continue.</p>
+        }
+    </div>
+</body>
+</html>

@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using NguyenHoangSon_NET1707_A02.Data;
 using NguyenHoangSon_NET1707_A02.Hubs;
@@ -17,7 +18,35 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddDbContext<FuminiHotelManagementContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+// Add session services
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 var app = builder.Build();
+
+//app.MapGet("/", async context =>
+//{
+//    string username = context.Session.GetString("Username");
+
+//    if (string.IsNullOrEmpty(username))
+//    {
+//        context.Response.Redirect("/Auths/Login");
+//    }
+//    else
+//    {
+//        context.Response.Redirect("/BookingReservations/Index");
+//    }
+
+//    await Task.CompletedTask;
+//});
+
+app.MapRazorPages();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -27,6 +56,23 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+// Use session
+app.UseSession();
+app.UseAuthenticationMiddleware();
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+
+app.UseRouting();
+
+
+
+
+
+app.UseAuthorization();
+
+app.MapHub<SignalRServer>("/signalRServer");
+app.MapRazorPages();
 
 using (var scope = app.Services.CreateScope())
 {
@@ -36,14 +82,5 @@ using (var scope = app.Services.CreateScope())
     context.Database.EnsureCreated();
     DbInitializer.Initialize(context);
 }
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-
-app.UseRouting();
-
-app.UseAuthorization();
-app.MapHub<SignalRServer>("/signalRServer");
-app.MapRazorPages();
 
 app.Run();

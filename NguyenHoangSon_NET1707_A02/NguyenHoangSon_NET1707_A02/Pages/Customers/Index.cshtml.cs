@@ -10,6 +10,7 @@ using NguyenHoangSon_NET1707_A02.Models;
 
 namespace NguyenHoangSon_NET1707_A02.Pages.Customers
 {
+    
     public class IndexModel : PageModel
     {
         private readonly NguyenHoangSon_NET1707_A02.Data.FuminiHotelManagementContext _context;
@@ -19,7 +20,7 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Customers
             _context = context;
         }
 
-        public IList<Customer> Customer { get;set; } = default!;
+        public IList<Customer> Customer { get; set; } = default!;
 
         public async Task OnGetAsync()
         {
