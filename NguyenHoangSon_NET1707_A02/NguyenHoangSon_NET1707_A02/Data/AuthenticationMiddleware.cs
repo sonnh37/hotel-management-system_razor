@@ -14,24 +14,27 @@ namespace NguyenHoangSon_NET1707_A02.Data
             _next = next;
         }
 
-        public Task Invoke(HttpContext httpContext)
+        public async Task Invoke(HttpContext httpContext)
         {
-            var path = httpContext.Request.Path;
-            if(path.HasValue && path.Value.StartsWith("/") && !path.Value.StartsWith("/Auths/Login"))
+            var path = httpContext.Request.Path.Value?.ToLower();
+
+            if (path != null)
             {
-                if(httpContext.Session.GetString("Username") == null)
+                if (!path.StartsWith("/auths/login") && !path.StartsWith("/auths/register") && httpContext.Session.GetString("Username") == null)
                 {
-                    httpContext.Response.Redirect("/Auths/Login");
+                    httpContext.Response.Redirect("/auths/login");
+                    return;
                 }
-            }
-            if(path.Value.StartsWith("/auths/login"))
-            {
-                if(httpContext.Session.GetString("Username") != null)
+
+                if ((path.StartsWith("/auths/login") || path.StartsWith("/auths/register")) && httpContext.Session.GetString("Username") != null)
                 {
                     httpContext.Response.Redirect("/");
+                    return;
                 }
             }
-            return _next(httpContext);
+
+            // Call the next middleware in the pipeline
+            await _next(httpContext);
         }
     }
 

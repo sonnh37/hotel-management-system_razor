@@ -22,12 +22,7 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Auths
 
         public void OnGet()
         {
-            //if (HttpContext.Session.GetString("Username") == null)
-            //{
-            //    return Page();
-            //}
-
-            //return Redirect("/");
+            
         }
 
         public IActionResult OnPost()
