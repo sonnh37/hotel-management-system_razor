@@ -35,6 +35,23 @@
                                 <a class="nav-link text-white" asp-area="" asp-page="/Customers/Index">Customers</a>
                             </li>
                         </ul>
+
+                    </div>
+                    <div class="form-inline my-2 my-lg-0">
+                        <div class="dropdown">
+                            <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                @Context.Session.GetString("Username")
+                            </a>
+                            <div class="dropdown-menu w-100" aria-labelledby="navbarDropdownMenuLink">
+                                <form method="post" asp-page="">
+                                    <button type="submit" class="dropdown-item">Profile</button>
+                                </form>
+
+                                <form method="post" asp-page="/Auths/Logout">
+                                <button type="submit" class="dropdown-item">Log out</button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </nav>
