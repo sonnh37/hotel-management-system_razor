@@ -65,10 +65,6 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-
-
-
-
 app.UseAuthorization();
 
 app.MapHub<SignalRServer>("/signalRServer");

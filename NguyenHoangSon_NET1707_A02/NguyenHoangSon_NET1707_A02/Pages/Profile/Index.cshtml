@@ -1,0 +1,72 @@
+﻿@page
+@model NguyenHoangSon_NET1707_A02.Pages.Profile.IndexModel
+@{
+}
+
+
+
+<div class="div-center" style="
+  background-color: #fff;
+  margin: auto;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: auto;
+  padding: 1em 2em;
+  border-bottom: 2px solid #ccc;
+    display: flex;
+justify-content: center;
+">
+
+
+    <div class="content" style="display: flex;
+  flex-direction: column; width: 40%">
+        <h3>Profile</h3>
+        <hr />
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="CustomerView.CustomerId" />
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" asp-for="CustomerView.CustomerFullName" id="floatingInput">
+                <label for="floatingInput">Full name</label>
+                <span asp-validation-for="CustomerView.CustomerFullName" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" asp-for="CustomerView.Telephone" id="floatingInput">
+                <label for="floatingInput">Telephone</label>
+                <span asp-validation-for="CustomerView.Telephone" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input readonly type="email" class="form-control" asp-for="CustomerView.EmailAddress" id="floatingInput" placeholder="name@example.com">
+                <label for="floatingInput">Email address</label>
+                <span asp-validation-for="CustomerView.EmailAddress" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="date" class="form-control" asp-for="CustomerView.CustomerBirthday" id="floatingInput">
+                <label for="floatingInput">Birthday</label>
+                <span asp-validation-for="CustomerView.CustomerBirthday" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3 d-none">
+                <label asp-for="CustomerView.CustomerStatus" class="control-label"></label>
+                <input asp-for="CustomerView.CustomerStatus" value="1" class="form-control" />
+                <span asp-validation-for="CustomerView.CustomerStatus" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control" asp-for="CustomerView.Password" id="floatingPassword" placeholder="Password">
+                <label for="floatingPassword">Password</label>
+                <span asp-validation-for="CustomerView.Password" class="text-danger"></span>
+            </div>
+
+            @if (TempData["Message"] != null)
+            {
+                <div class="alert alert-info">
+                    @TempData["Message"]
+                </div>
+            }
+
+            <div class="form-floating mb-4">
+                <input type="submit" value="Update" class="btn btn-primary btn-lg w-100" />
+            </div>
+        </form>
+
+    </div>
+</div>

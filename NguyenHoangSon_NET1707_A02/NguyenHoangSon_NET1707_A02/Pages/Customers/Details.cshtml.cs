@@ -12,9 +12,9 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Customers
 {
     public class DetailsModel : PageModel
     {
-        private readonly NguyenHoangSon_NET1707_A02.Data.FuminiHotelManagementContext _context;
+        private readonly FuminiHotelManagementContext _context;
 
-        public DetailsModel(NguyenHoangSon_NET1707_A02.Data.FuminiHotelManagementContext context)
+        public DetailsModel(FuminiHotelManagementContext context)
         {
             _context = context;
         }

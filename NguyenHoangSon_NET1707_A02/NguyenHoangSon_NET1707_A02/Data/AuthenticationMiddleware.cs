@@ -20,13 +20,27 @@ namespace NguyenHoangSon_NET1707_A02.Data
 
             if (path != null)
             {
-                if (!path.StartsWith("/auths/login") && !path.StartsWith("/auths/register") && httpContext.Session.GetString("Username") == null)
+                // nếu như ko phải link /auths... và ch đăng nhập thì chuyển login
+                if (!path.StartsWith("/auths") && httpContext.Session.GetString("Username") == null)
                 {
                     httpContext.Response.Redirect("/auths/login");
                     return;
                 }
 
-                if ((path.StartsWith("/auths/login") || path.StartsWith("/auths/register")) && httpContext.Session.GetString("Username") != null)
+                // customer 
+                if ((path.StartsWith("/auths/login")
+                    || path.StartsWith("/bookingreservations")
+                    || path.StartsWith("/roominformations")
+                    || path.StartsWith("/customers")
+                    ) && httpContext.Session.GetString("Username") != null && httpContext.Session.GetString("Role") == null)
+                {
+                    httpContext.Response.Redirect("/");
+                    return;
+                }
+
+                // admin
+                if ((path.StartsWith("/auths/login")
+                    ) && httpContext.Session.GetString("Username") != null && httpContext.Session.GetString("Role") != null)
                 {
                     httpContext.Response.Redirect("/");
                     return;
