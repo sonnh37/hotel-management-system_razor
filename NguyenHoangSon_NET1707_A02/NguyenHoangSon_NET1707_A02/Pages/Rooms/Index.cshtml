@@ -11,6 +11,13 @@
             <h3>Room List</h3>
         </header>
 
+        @if (TempData["Message"] != null)
+        {
+            <div class="alert alert-info">
+                @TempData["Message"]
+            </div>
+        }
+
         <div class="row">
             @foreach (var item in Model.RoomInformation)
             {
@@ -44,8 +51,13 @@
                             </div>
 
 
+
                             <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                                <a href="#" class="btn btn-outline-primary w-100">Add to cart</a>
+                                <form method="post">
+                                    <input type="hidden" name="id" value="@item.RoomId" />
+                                    <input type="submit" value="Add to cart" class="btn btn-outline-primary w-100" />
+                                </form>
+
                             </div>
                         </div>
 

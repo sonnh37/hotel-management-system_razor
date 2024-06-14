@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using NguyenHoangSon_NET1707_A02.Data
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -48,7 +49,21 @@
                     </ul>
 
                 </div>
-                <div class="form-inline my-2 my-lg-0">
+                <div class="form-inline my-2 my-lg-0 d-flex justify-content-center align-items-center">
+                    <div>
+                        <form method="get" asp-page="/Cart/Index" style="display:inline;">
+                            <button type="submit" class="button" style="border: none; background: none;">
+                                <img style="height: 30px; width: 30px; filter: invert(100%);" src="~/images/shopping-cart.png" alt="Shopping Cart">
+                                <div class="badge" id="cartCount">@((Session.carts != null) ? Session.carts.Count : 0)</div>
+                            </button>
+                        </form>
+
+                        <button class="button">
+                            <img style="height: 30px;
+        width: 30px;
+        filter: invert(100%);" src="~/images/history.png" alt="History">
+                        </button>
+                    </div>
                     <div class="dropdown">
                         <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             @Context.Session.GetString("Username")

@@ -1,0 +1,66 @@
+﻿@page
+@model NguyenHoangSon_NET1707_A02.Pages.Cart.IndexModel
+@{
+}
+<h1>Cart List</h1>
+
+<table class="table table-hover table-bordered">
+    <thead class="bg-dark text-white">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.RoomInformation[0].RoomNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RoomInformation[0].RoomDetailDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RoomInformation[0].RoomMaxCapacity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RoomInformation[0].RoomStatus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RoomInformation[0].RoomPricePerDay)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RoomInformation[0].RoomType)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.RoomInformation)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RoomNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RoomDetailDescription)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RoomMaxCapacity)
+                </td>
+                <td>
+                    @if (item.RoomStatus == 1)
+                    {
+                        <span>Active</span>
+                    }
+                    else
+                    {
+                        <span>Deleted</span>
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RoomPricePerDay)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RoomType.RoomTypeName)
+                </td>
+                <td>
+                    <a asp-page="./Delete" asp-route-id="@item.RoomId">Remove</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
