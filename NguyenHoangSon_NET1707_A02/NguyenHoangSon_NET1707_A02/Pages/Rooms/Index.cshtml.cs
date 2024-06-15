@@ -19,7 +19,6 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Rooms
             _context = context;
         }
 
-        [BindProperty]
         public IList<RoomInformation> RoomInformation { get;set; } = default!;
 
         public async Task OnGetAsync()

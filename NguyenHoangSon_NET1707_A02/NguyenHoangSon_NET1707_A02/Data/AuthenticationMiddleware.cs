@@ -29,7 +29,7 @@ namespace NguyenHoangSon_NET1707_A02.Data
 
                 // customer 
                 if ((path.StartsWith("/auths/login")
-                    || path.StartsWith("/bookingreservations")
+                    //|| path.StartsWith("/bookingreservations")
                     || path.StartsWith("/roominformations")
                     || path.StartsWith("/customers")
                     ) && httpContext.Session.GetString("Username") != null && httpContext.Session.GetString("Role") == null)

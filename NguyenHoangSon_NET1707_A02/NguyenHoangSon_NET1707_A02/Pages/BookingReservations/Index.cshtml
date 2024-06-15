@@ -5,11 +5,17 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Booking List</h1>
+@if (HttpContext.Session.GetString("Role") != null)
+{
+    <h1>Booking List</h1>
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
+    <p>
+        <a asp-page="Create">Create New</a>
+    </p>
+} else
+{
+    <h1>History booking reservations</h1>
+}
 <table class="table table-hover table-bordered">
     <thead class="bg-dark text-white">
         <tr>
@@ -29,14 +35,15 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.BookingReservation) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.BookingDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TotalPrice)
-            </td>
+        @foreach (var item in Model.BookingReservation)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BookingDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalPrice)
+                </td>
                 <td>
                     @if (item.BookingStatus == 1)
                     {
@@ -47,15 +54,27 @@
                         <span>Deleted</span>
                     }
                 </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Customer.CustomerFullName)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.BookingReservationId">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.BookingReservationId">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.BookingReservationId">Delete</a>
-            </td>
-        </tr>
-}
+                <td>
+                    @Html.DisplayFor(modelItem => item.Customer.CustomerFullName)
+                </td>
+
+                @if (HttpContext.Session.GetString("Role") != null)
+                {
+                    <td>
+                        <a asp-page="./Edit" asp-route-id="@item.BookingReservationId">Edit</a> |
+                        <a asp-page="./Details" asp-route-id="@item.BookingReservationId">Details</a> |
+                        <a asp-page="./Delete" asp-route-id="@item.BookingReservationId">Delete</a>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        <a asp-page="./Details" asp-route-id="@item.BookingReservationId">Details</a>
+                    </td>
+                }
+
+
+            </tr>
+        }
     </tbody>
 </table>
