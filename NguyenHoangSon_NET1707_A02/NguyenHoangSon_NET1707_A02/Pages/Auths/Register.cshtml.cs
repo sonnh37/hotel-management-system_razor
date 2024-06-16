@@ -1,9 +1,9 @@
 using AutoMapper;
+using FHS.BusinessLogic.Services;
+using FHS.BusinessLogic.Views;
+using FHS.DataAccess.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using NguyenHoangSon_NET1707_A02.Data;
-using NguyenHoangSon_NET1707_A02.Models;
-using NguyenHoangSon_NET1707_A02.Models.Views;
 
 namespace NguyenHoangSon_NET1707_A02.Pages.Auths
 {
@@ -12,12 +12,12 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Auths
         [BindProperty]
         public CustomerView CustomerView { get; set; } = default!;
 
-        private readonly FuminiHotelManagementContext _context;
+        private readonly CustomerService _customerService;
         private readonly IMapper _mapper;
 
-        public RegisterModel(FuminiHotelManagementContext context, IMapper mapper)
+        public RegisterModel(CustomerService customerService, IMapper mapper)
         {
-            _context = context;
+            _customerService = customerService;
             _mapper = mapper;
         }
 
@@ -26,20 +26,22 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Auths
 
         }
 
-        public IActionResult OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
-            var user = _context.Customers.Where(m => m.EmailAddress == CustomerView.EmailAddress).FirstOrDefault();
 
-            if (user != null)
+            if (!ModelState.IsValid)
             {
-                ModelState.AddModelError("", "Email has exist.");
-
+                ModelState.AddModelError("", "One or more files has wrong.");
                 return Page();
             }
 
-            _context.Customers.Add(_mapper.Map<Customer>(CustomerView));
-            _context.SaveChanges();
-
+            var customer = await _customerService.AddCustomer(_mapper.Map<Customer>(CustomerView));
+            if (customer == null)
+            {
+                ModelState.AddModelError("", "Error while adding customer");
+                return Page();
+            }
+            TempData["Message"] = "Register Succesfully.";
             return Redirect("/Auths/Login");
         }
     }

@@ -1,6 +1,7 @@
-﻿using NguyenHoangSon_NET1707_A02.Models;
+﻿
+using FHS.DataAccess.Entities;
 
-namespace NguyenHoangSon_NET1707_A02.Data
+namespace FHS.BusinessLogic.Views
 {
     public class Session
     {

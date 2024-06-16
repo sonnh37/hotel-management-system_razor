@@ -1,4 +1,4 @@
-﻿@using NguyenHoangSon_NET1707_A02.Data
+﻿@using FHS.BusinessLogic.Views
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -53,14 +53,14 @@
                     <div>
                         @if (Context.Session.GetString("Role") == null)
                         {
-                            <form method="get" asp-page="/Cart/Index" style="display:inline;">
+                            <form method="get" action="/Cart/Index" style="display:inline;">
                                 <button type="submit" class="button" style="border: none; background: none;">
                                     <img style="height: 30px; width: 30px; filter: invert(100%);" src="~/images/shopping-cart.png" alt="Shopping Cart">
                                     <div class="badge" id="cartCount">@((Session.carts != null) ? Session.carts.Count : 0)</div>
                                 </button>
                             </form>
 
-                            <form method="get" asp-page="/BookingReservations/Index" style="display:inline;">
+                            <form method="get" action="/bookingreservations/index" style="display:inline;">
 
                                 <button type="submit" class="button">
                                     <img style="height: 30px;

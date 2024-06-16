@@ -1,17 +1,20 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
+using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace NguyenHoangSon_NET1707_A02.Data
+namespace NguyenHoangSon_NET1707_A02.Middleware
 {
     // You may need to install the Microsoft.AspNetCore.Http.Abstractions package into your project
     public class AuthenticationMiddleware
     {
         private readonly RequestDelegate _next;
+        private string EmailAddress = "";
+        private string Role = "";
 
         public AuthenticationMiddleware(RequestDelegate next)
         {
             _next = next;
+
         }
 
         public async Task Invoke(HttpContext httpContext)
@@ -20,8 +23,11 @@ namespace NguyenHoangSon_NET1707_A02.Data
 
             if (path != null)
             {
+                EmailAddress = httpContext.Session.GetString("Username");
+                Role = httpContext.Session.GetString("Role");
                 // nếu như ko phải link /auths... và ch đăng nhập thì chuyển login
-                if (!path.StartsWith("/auths") && httpContext.Session.GetString("Username") == null)
+
+                if (!path.StartsWith("/auths") && EmailAddress == null)
                 {
                     httpContext.Response.Redirect("/auths/login");
                     return;
@@ -29,18 +35,28 @@ namespace NguyenHoangSon_NET1707_A02.Data
 
                 // customer 
                 if ((path.StartsWith("/auths/login")
-                    //|| path.StartsWith("/bookingreservations")
+                    || path.StartsWith("/bookingreservations")
                     || path.StartsWith("/roominformations")
                     || path.StartsWith("/customers")
-                    ) && httpContext.Session.GetString("Username") != null && httpContext.Session.GetString("Role") == null)
+                    ) && EmailAddress != null && Role == null)
                 {
-                    httpContext.Response.Redirect("/");
-                    return;
+                    // allow
+                    if (path.StartsWith("/bookingreservations/index") || path.StartsWith("/bookingreservations/details")
+                        || path.StartsWith("/roominformations/details")
+                        )
+                    {
+                        
+                    } else
+                    {
+                        httpContext.Response.Redirect("/");
+                        return;
+                    }
+                    
                 }
 
                 // admin
-                if ((path.StartsWith("/auths/login")
-                    ) && httpContext.Session.GetString("Username") != null && httpContext.Session.GetString("Role") != null)
+                if (path.StartsWith("/auths/login")
+                     && EmailAddress != null && Role != null)
                 {
                     httpContext.Response.Redirect("/");
                     return;

@@ -1,9 +1,15 @@
 using AutoMapper;
+using FHS.BusinessLogic.Services;
+using FHS.BusinessLogic.Tools;
+using FHS.DataAccess.Contracts;
+using FHS.DataAccess.Entities;
+using FHS.DataAccess.Entities.InitData;
+using FHS.DataAccess.Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
-using NguyenHoangSon_NET1707_A02.Data;
+using Microsoft.Extensions.Options;
 using NguyenHoangSon_NET1707_A02.Hubs;
-using NguyenHoangSon_NET1707_A02.Tools;
+using NguyenHoangSon_NET1707_A02.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,8 +22,25 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 builder.Services.AddDbContext<FuminiHotelManagementContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+});
+    
+
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+builder.Services.AddScoped<IBaseRepository<BookingDetail>, BaseRepository<BookingDetail>>();
+builder.Services.AddScoped<IBaseRepository<BookingReservation>, BaseRepository<BookingReservation>>();
+builder.Services.AddScoped<IBaseRepository<Customer>, BaseRepository<Customer>>();
+builder.Services.AddScoped<IBaseRepository<RoomInformation>, BaseRepository<RoomInformation>>();
+builder.Services.AddScoped<IBaseRepository<RoomType>, BaseRepository<RoomType>>();
+
+builder.Services.AddScoped<BookingDetailService>();
+builder.Services.AddScoped<BookingReservationService>();
+builder.Services.AddScoped<CustomerService>();
+builder.Services.AddScoped<RoomInformationService>();
+builder.Services.AddScoped<RoomTypeService>();
 
 // Add session services
 builder.Services.AddDistributedMemoryCache();

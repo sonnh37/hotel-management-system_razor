@@ -57,6 +57,13 @@
     </dl>
 </div>
 <div>
-    <a asp-page="./Edit" asp-route-id="@Model.RoomInformation.RoomId">Edit</a> |
-    <a asp-page="./Index">Back to List</a>
+    @if (HttpContext.Session.GetString("Role") == null)
+    {
+        <a href="/Rooms/Index">Back to List</a>
+    } else
+    {
+        <a asp-page="./Edit" asp-route-id="@Model.RoomInformation.RoomId">Edit</a>
+        <a asp-page="./Index">Back to List</a>
+    }
+
 </div>

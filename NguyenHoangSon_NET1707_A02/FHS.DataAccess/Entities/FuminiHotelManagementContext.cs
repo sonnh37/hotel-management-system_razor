@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using NguyenHoangSon_NET1707_A02.Models;
 
-namespace NguyenHoangSon_NET1707_A02.Data;
+namespace FHS.DataAccess.Entities;
 
 public partial class FuminiHotelManagementContext : DbContext
 {
@@ -41,6 +40,8 @@ public partial class FuminiHotelManagementContext : DbContext
 
             entity.ToTable("BookingDetail");
 
+            entity.HasIndex(e => e.RoomId, "IX_BookingDetail_RoomID");
+
             entity.Property(e => e.BookingReservationId).HasColumnName("BookingReservationID");
             entity.Property(e => e.RoomId).HasColumnName("RoomID");
             entity.Property(e => e.ActualPrice).HasColumnType("money");
@@ -57,6 +58,8 @@ public partial class FuminiHotelManagementContext : DbContext
         modelBuilder.Entity<BookingReservation>(entity =>
         {
             entity.ToTable("BookingReservation");
+
+            entity.HasIndex(e => e.CustomerId, "IX_BookingReservation_CustomerID");
 
             entity.Property(e => e.BookingReservationId)
                 .ValueGeneratedNever()
@@ -87,6 +90,8 @@ public partial class FuminiHotelManagementContext : DbContext
             entity.HasKey(e => e.RoomId);
 
             entity.ToTable("RoomInformation");
+
+            entity.HasIndex(e => e.RoomTypeId, "IX_RoomInformation_RoomTypeID");
 
             entity.Property(e => e.RoomId).HasColumnName("RoomID");
             entity.Property(e => e.RoomDetailDescription).HasMaxLength(220);

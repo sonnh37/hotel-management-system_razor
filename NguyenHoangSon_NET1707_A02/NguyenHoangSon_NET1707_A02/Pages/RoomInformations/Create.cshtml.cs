@@ -6,26 +6,28 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using NguyenHoangSon_NET1707_A02.Data;
-using NguyenHoangSon_NET1707_A02.Models;
-using NguyenHoangSon_NET1707_A02.Models.Views;
+using FHS.DataAccess.Entities;
+using FHS.BusinessLogic.Views;
+using FHS.BusinessLogic.Services;
 
 namespace NguyenHoangSon_NET1707_A02.Pages.RoomInformations
 {
     public class CreateModel : PageModel
     {
-        private readonly FuminiHotelManagementContext _context;
+        private readonly RoomInformationService _roomInformationService;
+        private readonly RoomTypeService _roomTypeService;
         private readonly IMapper _mapper;
 
-        public CreateModel(FuminiHotelManagementContext context, IMapper mapper)
+        public CreateModel(RoomInformationService roomInformationService, RoomTypeService roomTypeService, IMapper mapper)
         {
-            _context = context;
+            _roomInformationService = roomInformationService;
+            _roomTypeService = roomTypeService;
             _mapper = mapper;
         }
 
-        public IActionResult OnGet()
+        public async Task<IActionResult> OnGetAsync()
         {
-            ViewData["RoomTypeId"] = new SelectList(_context.RoomTypes, "RoomTypeId", "RoomTypeName");
+            ViewData["RoomTypeId"] = new SelectList(await _roomTypeService.GetAllRoomType(), "RoomTypeId", "RoomTypeName");
             return Page();
         }
 
@@ -40,9 +42,13 @@ namespace NguyenHoangSon_NET1707_A02.Pages.RoomInformations
                 return Page();
             }
 
-            _context.RoomInformations.Add(_mapper.Map<RoomInformation>(RoomInformation));
-            await _context.SaveChangesAsync();
-
+            var room = await _roomInformationService.AddRoomInformation(_mapper.Map<RoomInformation>(RoomInformation));
+            if (room == null)
+            {
+                ModelState.AddModelError("", "Error while adding room");
+                return Page();
+            }
+            TempData["Message"] = "Add Succesfully";
             return RedirectToPage("./Index");
         }
     }

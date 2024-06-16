@@ -7,20 +7,21 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using NguyenHoangSon_NET1707_A02.Data;
-using NguyenHoangSon_NET1707_A02.Models;
-using NguyenHoangSon_NET1707_A02.Models.Views;
+
+using FHS.DataAccess.Entities;
+using FHS.BusinessLogic.Views;
+using FHS.BusinessLogic.Services;
 
 namespace NguyenHoangSon_NET1707_A02.Pages.Customers
 {
     public class EditModel : PageModel
     {
-        private readonly FuminiHotelManagementContext _context;
+        private readonly CustomerService _customerService;
         private readonly IMapper _mapper;
 
-        public EditModel(FuminiHotelManagementContext context, IMapper mapper)
+        public EditModel(CustomerService customerService, IMapper mapper)
         {
-            _context = context;
+            _customerService = customerService;
             _mapper = mapper;
         }
 
@@ -34,7 +35,7 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Customers
                 return NotFound();
             }
 
-            var customer =  await _context.Customers.FirstOrDefaultAsync(m => m.CustomerId == id);
+            var customer =  await _customerService.GetCustomerByQueryable(m => m.CustomerId == id);
             if (customer == null)
             {
                 return NotFound();
@@ -52,30 +53,9 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Customers
                 return Page();
             }
 
-            _context.Attach(_mapper.Map<Customer>(Customer)).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CustomerExists(Customer.CustomerId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            await _customerService.UpdateCustomer(_mapper.Map<Customer>(Customer));
+            TempData["Message"] = "Update Succesfully";
             return RedirectToPage("./Index");
-        }
-
-        private bool CustomerExists(int id)
-        {
-            return _context.Customers.Any(e => e.CustomerId == id);
         }
     }
 }

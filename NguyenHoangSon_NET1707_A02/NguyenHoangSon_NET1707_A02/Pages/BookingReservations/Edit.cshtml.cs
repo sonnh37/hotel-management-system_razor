@@ -7,20 +7,23 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using NguyenHoangSon_NET1707_A02.Data;
-using NguyenHoangSon_NET1707_A02.Models;
-using NguyenHoangSon_NET1707_A02.Models.Views;
+
+using FHS.DataAccess.Entities;
+using FHS.BusinessLogic.Views;
+using FHS.BusinessLogic.Services;
 
 namespace NguyenHoangSon_NET1707_A02.Pages.BookingReservations
 {
     public class EditModel : PageModel
     {
-        private readonly FuminiHotelManagementContext _context;
+        private readonly CustomerService _customerService;
+        private readonly BookingReservationService _bookingReservationService;
         private readonly IMapper _mapper;
 
-        public EditModel(FuminiHotelManagementContext context, IMapper mapper)
+        public EditModel(CustomerService customerService, BookingReservationService bookingReservationService, IMapper mapper)
         {
-            _context = context;
+            _customerService = customerService;
+            _bookingReservationService = bookingReservationService;
             _mapper = mapper;
         }
 
@@ -34,13 +37,13 @@ namespace NguyenHoangSon_NET1707_A02.Pages.BookingReservations
                 return NotFound();
             }
 
-            var bookingreservation =  await _context.BookingReservations.FirstOrDefaultAsync(m => m.BookingReservationId == id);
+            var bookingreservation = await _bookingReservationService.GetBookingReservationByQueryable(m => m.BookingReservationId == id);
             if (bookingreservation == null)
             {
                 return NotFound();
             }
             BookingReservation = _mapper.Map<BookingReservationView>(bookingreservation);
-           ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerFullName");
+            ViewData["CustomerId"] = new SelectList(await _customerService.GetAllCustomer(), "CustomerId", "CustomerFullName");
             return Page();
         }
 
@@ -53,30 +56,10 @@ namespace NguyenHoangSon_NET1707_A02.Pages.BookingReservations
                 return Page();
             }
 
-            _context.Attach(_mapper.Map<BookingReservation>(BookingReservation)).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BookingReservationExists(BookingReservation.BookingReservationId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _bookingReservationService.UpdateBookingReservation(_mapper.Map<BookingReservation>(BookingReservation));
 
             return RedirectToPage("./Index");
         }
 
-        private bool BookingReservationExists(int id)
-        {
-            return _context.BookingReservations.Any(e => e.BookingReservationId == id);
-        }
     }
 }

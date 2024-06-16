@@ -1,12 +1,12 @@
+using AutoMapper;
+using FHS.BusinessLogic.Services;
+using FHS.BusinessLogic.Views;
+using FHS.DataAccess.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
-using NguyenHoangSon_NET1707_A02.Data;
-using NguyenHoangSon_NET1707_A02.Models;
-using NguyenHoangSon_NET1707_A02.Models.Views;
 
 namespace NguyenHoangSon_NET1707_A02.Pages.Auths
 {
@@ -16,11 +16,13 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Auths
         [BindProperty]
         public LoginView LoginView { get; set; } = default!;
 
-        private readonly FuminiHotelManagementContext _context;
+        private readonly CustomerService _customerService;
+        private readonly IMapper _mapper;
 
-        public LoginModel(FuminiHotelManagementContext context)
+        public LoginModel(CustomerService customerService, IMapper mapper)
         {
-            _context = context;
+            _customerService = customerService;
+            _mapper = mapper;
         }
 
         public void OnGet()
@@ -28,7 +30,7 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Auths
 
         }
 
-        public IActionResult OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
             Customer user = null;
             if (!ModelState.IsValid)
@@ -42,18 +44,16 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Auths
                 HttpContext.Session.SetString("Role", "Admin");
                 user = new Customer();
                 user.EmailAddress = account["email"].ToLower();
-                Console.Write(HttpContext.Session.GetString("Role"));
             }
             else
             {
-                user = _context.Customers.Where(m => m.EmailAddress == LoginView.Email && m.Password == LoginView.Password).FirstOrDefault();
+                user = await _customerService.GetCustomerByQueryable(m => m.EmailAddress == LoginView.Email && m.Password == LoginView.Password);
 
                 if (user == null)
                 {
-                    ModelState.AddModelError("", "Invalid username or password.");
+                    ModelState.AddModelError("", "Invalid email or password.");
 
                     return Page();
-
                 }
             }
 

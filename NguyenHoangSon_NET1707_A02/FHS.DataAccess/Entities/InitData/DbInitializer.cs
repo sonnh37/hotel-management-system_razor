@@ -1,8 +1,8 @@
-﻿using NguyenHoangSon_NET1707_A02.Models;
+﻿using FHS.DataAccess.Entities;
 using System;
 using System.Linq;
 
-namespace NguyenHoangSon_NET1707_A02.Data
+namespace FHS.DataAccess.Entities.InitData
 {
     public class DbInitializer
     {

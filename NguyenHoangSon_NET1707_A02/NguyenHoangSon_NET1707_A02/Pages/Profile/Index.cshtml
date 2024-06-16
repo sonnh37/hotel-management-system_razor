@@ -23,7 +23,7 @@ justify-content: center;
         <h3>Profile</h3>
         <hr />
         <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
             <input type="hidden" asp-for="CustomerView.CustomerId" />
             <div class="form-floating mb-3">
                 <input type="text" class="form-control" asp-for="CustomerView.CustomerFullName" id="floatingInput">
@@ -56,9 +56,10 @@ justify-content: center;
                 <span asp-validation-for="CustomerView.Password" class="text-danger"></span>
             </div>
 
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             @if (TempData["Message"] != null)
             {
-                <div class="alert alert-info">
+                <div class="alert alert-success">
                     @TempData["Message"]
                 </div>
             }

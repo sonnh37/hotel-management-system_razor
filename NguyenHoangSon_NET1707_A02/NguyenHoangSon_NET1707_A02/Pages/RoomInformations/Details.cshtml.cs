@@ -5,18 +5,24 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using NguyenHoangSon_NET1707_A02.Data;
-using NguyenHoangSon_NET1707_A02.Models;
+
+using FHS.DataAccess.Entities;
+using AutoMapper;
+using FHS.BusinessLogic.Services;
 
 namespace NguyenHoangSon_NET1707_A02.Pages.RoomInformations
 {
     public class DetailsModel : PageModel
     {
-        private readonly NguyenHoangSon_NET1707_A02.Data.FuminiHotelManagementContext _context;
+        private readonly RoomInformationService _roomInformationService;
+        private readonly RoomTypeService _roomTypeService;
+        private readonly IMapper _mapper;
 
-        public DetailsModel(NguyenHoangSon_NET1707_A02.Data.FuminiHotelManagementContext context)
+        public DetailsModel(RoomInformationService roomInformationService, RoomTypeService roomTypeService, IMapper mapper)
         {
-            _context = context;
+            _roomInformationService = roomInformationService;
+            _roomTypeService = roomTypeService;
+            _mapper = mapper;
         }
 
         public RoomInformation RoomInformation { get; set; } = default!;
@@ -28,7 +34,7 @@ namespace NguyenHoangSon_NET1707_A02.Pages.RoomInformations
                 return NotFound();
             }
 
-            var roominformation = await _context.RoomInformations.Include(m => m.RoomType).FirstOrDefaultAsync(m => m.RoomId == id);
+            var roominformation = await _roomInformationService.GetRoomInformationByQueryable(m => m.RoomId == id);
             if (roominformation == null)
             {
                 return NotFound();

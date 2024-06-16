@@ -1,24 +1,35 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using NguyenHoangSon_NET1707_A02.Data;
-using NguyenHoangSon_NET1707_A02.Models;
-using NguyenHoangSon_NET1707_A02.Models.Views;
+
+using FHS.DataAccess.Entities;
+using FHS.BusinessLogic.Views;
+using FHS.BusinessLogic.Services;
+using AutoMapper;
 
 namespace NguyenHoangSon_NET1707_A02.Pages.Cart
 {
     public class IndexModel : PageModel
     {
-        private readonly FuminiHotelManagementContext _context;
+        private readonly CustomerService _customerService;
+        private readonly BookingReservationService _bookingReservationService;
+        private readonly BookingDetailService _bookingDetailService;
+        private readonly IMapper _mapper;
 
-        public IndexModel(FuminiHotelManagementContext context)
+        public IndexModel(CustomerService customerService, BookingReservationService bookingReservationService, IMapper mapper, BookingDetailService bookingDetailService)
         {
-            _context = context;
+            _customerService = customerService;
+            _bookingReservationService = bookingReservationService;
+            _mapper = mapper;
+            _bookingDetailService = bookingDetailService;
         }
 
         public IList<RoomInformation> RoomInformation { get; set; } = new List<RoomInformation>();
 
         [BindProperty]
         public DateView DateView { get; set; } = default!;
+
+        [BindProperty]
+        public long TotalPrice { get; set; } = default!;
 
         public void OnGet()
         {
@@ -28,27 +39,26 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Cart
             }
             if (DateView == null)
             {
-                DateView = new DateView();
-                //DateView = new DateView
-                //{
-                //    StartDate = DateOnly.FromDateTime(DateTime.UtcNow),
-                //    EndDate = DateOnly.FromDateTime(DateTime.UtcNow),
-                //};
+                DateView = new DateView
+                {
+                    StartDate = DateOnly.FromDateTime(DateTime.UtcNow),
+                    EndDate = DateOnly.FromDateTime(DateTime.UtcNow),
+                };
             }
         }
 
-        public IActionResult OnPostCheckout()
+        public async Task<IActionResult> OnPostCheckoutAsync()
         {
             if (!ModelState.IsValid)
             {
-                TempData["Message"] = "Pls select Start and End Date";
+                ModelState.AddModelError("", "Pls select Start and End Date.");
                 OnGet();
                 return Page();
             }
 
-            if(!CheckDate(DateView.StartDate.Value, DateView.EndDate.Value))
+            if (!CheckDate(DateView.StartDate.Value, DateView.EndDate.Value))
             {
-                TempData["Message"] = "End date must be greater than start date.";
+                ModelState.AddModelError("", "End date must be greater than start date.");
                 OnGet();
                 return Page();
             }
@@ -77,36 +87,35 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Cart
                     }
 
                     //Add
-                    _context.BookingReservations.Add(bookingReservation);
-                    _context.BookingDetails.AddRange(bookingDetails);
+                    await _bookingReservationService.AddBookingReservation(bookingReservation);
+                    await _bookingDetailService.AddRangeBookingDetail(bookingDetails);
 
                     TempData["Message"] = "Booking successfully added!";
                 }
                 else
                 {
-                    TempData["Message"] = "Pls select Start and End Date";
+                    ModelState.AddModelError("", "Pls select Start and End Date.");
                 }
             }
             else
             {
-                TempData["Message"] = "Pls add more room";
+                ModelState.AddModelError("", "Pls add more room.");
             }
 
             // Clear the cart after successful checkout
             Session.carts.Clear();
-            _context.SaveChanges();
 
             // Redirect to a confirmation page or home page
-            return Redirect("/Cart");
+            return Redirect("/BookingReservations/Index");
         }
 
         private BookingReservation GetBookingReservation()
         {
             var email = HttpContext.Session.GetString("Username").ToLower().ToString();
-            Customer customer = _context.Customers.Where(m => m.EmailAddress.ToLower() == email).SingleOrDefault();
+            Customer customer = _customerService.GetCustomerByQueryable(m => m.EmailAddress == email).Result;
             return new BookingReservation
             {
-                BookingReservationId = _context.BookingReservations.Count(),
+                BookingReservationId = _bookingReservationService.GetAllBookingReservation().Result.Count() + 1,
                 BookingDate = DateOnly.FromDateTime(DateTime.UtcNow),
                 TotalPrice = 0,
                 CustomerId = customer.CustomerId,
@@ -133,17 +142,17 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Cart
                 TempData["Message"] = "Room price per day must be specified.";
             }
 
-            int numberOfDays = endDate.DayNumber - startDate.DayNumber;
+            int numberOfDays = endDate.DayNumber - startDate.DayNumber + 1;
 
             return priceOrigin.Value * numberOfDays;
         }
 
         private bool CheckDate(DateOnly startDate, DateOnly endDate)
         {
-            int numberOfDays = endDate.DayNumber - startDate.DayNumber;
+            int numberOfDays = endDate.DayNumber - startDate.DayNumber + 1;
             if (numberOfDays <= 0)
             {
-                
+
                 return false;
             }
 

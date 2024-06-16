@@ -1,4 +1,6 @@
-﻿namespace NguyenHoangSon_NET1707_A02.Models.Views
+﻿using FHS.DataAccess.Entities;
+
+namespace FHS.BusinessLogic.Views
 {
     public class BookingDetailView
     {

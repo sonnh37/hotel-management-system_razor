@@ -7,20 +7,23 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using NguyenHoangSon_NET1707_A02.Data;
-using NguyenHoangSon_NET1707_A02.Models;
-using NguyenHoangSon_NET1707_A02.Models.Views;
+
+using FHS.DataAccess.Entities;
+using FHS.BusinessLogic.Views;
+using FHS.BusinessLogic.Services;
 
 namespace NguyenHoangSon_NET1707_A02.Pages.RoomInformations
 {
     public class EditModel : PageModel
     {
-        private readonly FuminiHotelManagementContext _context;
+        private readonly RoomInformationService _roomInformationService;
+        private readonly RoomTypeService _roomTypeService;
         private readonly IMapper _mapper;
 
-        public EditModel(FuminiHotelManagementContext context, IMapper mapper)
+        public EditModel(RoomInformationService roomInformationService, RoomTypeService roomTypeService, IMapper mapper)
         {
-            _context = context;
+            _roomInformationService = roomInformationService;
+            _roomTypeService = roomTypeService;
             _mapper = mapper;
         }
 
@@ -34,13 +37,13 @@ namespace NguyenHoangSon_NET1707_A02.Pages.RoomInformations
                 return NotFound();
             }
 
-            var roominformation = await _context.RoomInformations.Where(m => m.RoomId == id).Include(m => m.RoomType).FirstOrDefaultAsync();
+            var roominformation = await _roomInformationService.GetRoomInformationByQueryable(m => m.RoomId == id);
             if (roominformation == null)
             {
                 return NotFound();
             }
             RoomInformation = _mapper.Map<RoomInformationView>(roominformation);
-            ViewData["RoomTypeId"] = new SelectList(_context.RoomTypes, "RoomTypeId", "RoomTypeName");
+            ViewData["RoomTypeId"] = new SelectList(await _roomTypeService.GetAllRoomType(), "RoomTypeId", "RoomTypeName");
 
             return Page();
         }
@@ -54,30 +57,9 @@ namespace NguyenHoangSon_NET1707_A02.Pages.RoomInformations
                 return Page();
             }
 
-            _context.Attach(_mapper.Map<RoomInformation>(RoomInformation)).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!RoomInformationExists(RoomInformation.RoomId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            await _roomInformationService.UpdateRoomInformation(_mapper.Map<RoomInformation>(RoomInformation));
+            TempData["Message"] = "Update Succesfully";
             return RedirectToPage("./Index");
-        }
-
-        private bool RoomInformationExists(int id)
-        {
-            return _context.RoomInformations.Any(e => e.RoomId == id);
         }
     }
 }

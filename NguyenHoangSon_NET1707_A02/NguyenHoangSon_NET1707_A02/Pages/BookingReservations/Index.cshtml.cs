@@ -5,18 +5,23 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using NguyenHoangSon_NET1707_A02.Data;
-using NguyenHoangSon_NET1707_A02.Models;
+
+using FHS.DataAccess.Entities;
+using FHS.BusinessLogic.Services;
 
 namespace NguyenHoangSon_NET1707_A02.Pages.BookingReservations
 {
     public class IndexModel : PageModel
     {
-        private readonly NguyenHoangSon_NET1707_A02.Data.FuminiHotelManagementContext _context;
+        private readonly FuminiHotelManagementContext _context;
+        private readonly CustomerService _customerService;
+        private readonly BookingReservationService _bookingReservationService;
 
-        public IndexModel(NguyenHoangSon_NET1707_A02.Data.FuminiHotelManagementContext context)
+        public IndexModel(FuminiHotelManagementContext context, CustomerService customerService, BookingReservationService bookingReservationService)
         {
             _context = context;
+            _customerService = customerService;
+            _bookingReservationService = bookingReservationService;
         }
 
         public IList<BookingReservation> BookingReservation { get; set; } = default!;
@@ -25,17 +30,17 @@ namespace NguyenHoangSon_NET1707_A02.Pages.BookingReservations
         {
             if (HttpContext.Session.GetString("Role") != null)
             {
-                BookingReservation = await _context.BookingReservations.Where(m => m.BookingStatus == Convert.ToByte(1))
-                .Include(m => m.Customer)
-                .Include(m => m.BookingDetails).ToListAsync();
+                BookingReservation = await _bookingReservationService.GetAllBookingReservation();
             }
             else
             {
                 var email = HttpContext.Session.GetString("Username").ToLower().ToString();
-                Customer customer = _context.Customers.Where(m => m.EmailAddress.ToLower() == email).SingleOrDefault();
-                BookingReservation = await _context.BookingReservations.Where(m => m.CustomerId == customer.CustomerId && m.BookingStatus == Convert.ToByte(1))
-                .Include(m => m.Customer)
-                .Include(m => m.BookingDetails).ToListAsync();
+                Customer customer = await _customerService.GetCustomerByQueryable(m => m.EmailAddress == email);
+                BookingReservation = await _bookingReservationService.GetBookingReservationListByQueryable(m => m.CustomerId == customer.CustomerId && m.BookingStatus == Convert.ToByte(1));
+                if (BookingReservation == null)
+                {
+                    BookingReservation = new List<BookingReservation>();
+                }
             }
 
         }

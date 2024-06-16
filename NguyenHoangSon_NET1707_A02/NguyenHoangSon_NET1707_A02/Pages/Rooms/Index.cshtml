@@ -13,10 +13,11 @@
 
         @if (TempData["Message"] != null)
         {
-            <div class="alert alert-info">
+            <div class="alert alert-success">
                 @TempData["Message"]
             </div>
         }
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
         <div class="row">
             @foreach (var item in Model.RoomInformation)
@@ -32,7 +33,9 @@
                                 </strong>
                             </div>
                             <div>
-                                <p>
+                                <p style="white-space: nowrap;
+ overflow: hidden;
+ text-overflow: ellipsis;" data-bs-toggle="tooltip" data-bs-placement="top" title="@Html.DisplayFor(modelItem => item.RoomDetailDescription)">
                                     @Html.DisplayFor(modelItem => item.RoomDetailDescription)
                                 </p>
                             </div>
@@ -42,7 +45,7 @@
                                 </span>
                             </div>
                             <div>
-                                Type Room: @Html.DisplayFor(modelItem => item.RoomType.RoomTypeName)
+                                Type: @Html.DisplayFor(modelItem => item.RoomType.RoomTypeName)
                             </div>
                             <div class="price-wrap mb-2">
                                 <strong class="">
@@ -53,9 +56,14 @@
 
 
                             <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                                <form method="post">
+                                <form method="post" class="ms-2 me-2">
                                     <input type="hidden" name="id" value="@item.RoomId" />
-                                    <input type="submit" value="Add to cart" class="btn btn-outline-primary w-100" />
+                                    <input type="submit" value="Add to cart" class="btn btn-primary" />
+                                </form>
+
+                                <form asp-page="/roominformations/details" method="get">
+                                    <input type="hidden" name="id" value="@item.RoomId" />
+                                    <input type="submit" value="Details" class="btn btn-warning" />
                                 </form>
 
                             </div>
@@ -70,61 +78,3 @@
         </div>
     </div>
 </section>
-<!-- Recommended -->
-@* <p>
-    <a asp-page="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.RoomInformation[0].RoomNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RoomInformation[0].RoomDetailDescription)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RoomInformation[0].RoomMaxCapacity)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RoomInformation[0].RoomStatus)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RoomInformation[0].RoomPricePerDay)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RoomInformation[0].RoomType)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.RoomInformation) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.RoomNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RoomDetailDescription)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RoomMaxCapacity)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RoomStatus)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RoomPricePerDay)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RoomType.RoomTypeId)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.RoomId">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.RoomId">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.RoomId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table> *@

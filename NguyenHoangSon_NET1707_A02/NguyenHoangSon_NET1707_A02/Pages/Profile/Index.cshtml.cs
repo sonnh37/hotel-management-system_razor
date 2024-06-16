@@ -2,20 +2,21 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using NguyenHoangSon_NET1707_A02.Data;
-using NguyenHoangSon_NET1707_A02.Models;
-using NguyenHoangSon_NET1707_A02.Models.Views;
+
+using FHS.DataAccess.Entities;
+using FHS.BusinessLogic.Views;
+using FHS.BusinessLogic.Services;
 
 namespace NguyenHoangSon_NET1707_A02.Pages.Profile
 {
     public class IndexModel : PageModel
     {
-        private readonly FuminiHotelManagementContext _context;
+        private readonly CustomerService _customerService;
         private readonly IMapper _mapper;
 
-        public IndexModel(FuminiHotelManagementContext context, IMapper mapper)
+        public IndexModel(CustomerService customerService, IMapper mapper)
         {
-            _context = context;
+            _customerService = customerService;
             _mapper = mapper;
         }
 
@@ -27,7 +28,7 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Profile
             var email = HttpContext.Session.GetString("Username");
             if (email != null)
             {
-                var customer = await _context.Customers.Where(m => m.EmailAddress == email).SingleOrDefaultAsync();
+                var customer = await _customerService.GetCustomerByQueryable(m => m.EmailAddress == email);
 
                 if (customer != null)
                 {
@@ -41,41 +42,13 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Profile
         {
             if (!ModelState.IsValid)
             {
-                TempData["Message"] = "There was an error with the submitted data.";
                 return Page();
             }
 
-            if (CustomerView != null)
-            {
-                _context.Attach(_mapper.Map<Customer>(CustomerView)).State = EntityState.Modified;
-            }
-
-            try
-            {
-                await _context.SaveChangesAsync();
-                await OnGetAsync();
-                TempData["Message"] = "Account updated successfully.";
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CustomerExists(CustomerView.CustomerId))
-                {
-                    TempData["Message"] = "Account not found.";
-                    return NotFound();
-                }
-                else
-                {
-                    TempData["Message"] = "An error occurred while updating the account.";
-                    throw;
-                }
-            }
-
+            await _customerService.UpdateCustomer(_mapper.Map<Customer>(CustomerView));
+            TempData["Message"] = ($"Update Succesfully.");
             return Page();
         }
 
-        private bool CustomerExists(int id)
-        {
-            return _context.Customers.Any(e => e.CustomerId == id);
-        }
     }
 }

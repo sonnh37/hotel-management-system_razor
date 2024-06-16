@@ -5,18 +5,24 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using NguyenHoangSon_NET1707_A02.Data;
-using NguyenHoangSon_NET1707_A02.Models;
+
+using FHS.DataAccess.Entities;
+using AutoMapper;
+using FHS.BusinessLogic.Services;
 
 namespace NguyenHoangSon_NET1707_A02.Pages.BookingReservations
 {
     public class DeleteModel : PageModel
     {
-        private readonly NguyenHoangSon_NET1707_A02.Data.FuminiHotelManagementContext _context;
+        private readonly CustomerService _customerService;
+        private readonly BookingReservationService _bookingReservationService;
+        private readonly IMapper _mapper;
 
-        public DeleteModel(NguyenHoangSon_NET1707_A02.Data.FuminiHotelManagementContext context)
+        public DeleteModel(CustomerService customerService, BookingReservationService bookingReservationService, IMapper mapper)
         {
-            _context = context;
+            _customerService = customerService;
+            _bookingReservationService = bookingReservationService;
+            _mapper = mapper;
         }
 
         [BindProperty]
@@ -29,7 +35,7 @@ namespace NguyenHoangSon_NET1707_A02.Pages.BookingReservations
                 return NotFound();
             }
 
-            var bookingreservation = await _context.BookingReservations.Include(m => m.Customer).FirstOrDefaultAsync(m => m.BookingReservationId == id);
+            var bookingreservation = await _bookingReservationService.GetBookingReservationByQueryable(m => m.BookingReservationId == id);
 
             if (bookingreservation == null)
             {
@@ -49,15 +55,8 @@ namespace NguyenHoangSon_NET1707_A02.Pages.BookingReservations
                 return NotFound();
             }
 
-            var bookingreservation = await _context.BookingReservations.FindAsync(id);
-            if (bookingreservation != null)
-            {
-                BookingReservation = bookingreservation;
-                BookingReservation.BookingStatus = Convert.ToByte(2);
-                _context.BookingReservations.Update(BookingReservation);
-                await _context.SaveChangesAsync();
-            }
-
+            await _bookingReservationService.DeleteBookingReservation(id.Value);
+            TempData["Message"] = "Delete Succesfully.";
             return RedirectToPage("./Index");
         }
     }

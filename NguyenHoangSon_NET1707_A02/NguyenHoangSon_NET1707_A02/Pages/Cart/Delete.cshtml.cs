@@ -5,18 +5,20 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using NguyenHoangSon_NET1707_A02.Data;
-using NguyenHoangSon_NET1707_A02.Models;
+
+using FHS.DataAccess.Entities;
+using FHS.BusinessLogic.Views;
+using FHS.BusinessLogic.Services;
 
 namespace NguyenHoangSon_NET1707_A02.Pages.Cart
 {
     public class DeleteModel : PageModel
     {
-        private readonly NguyenHoangSon_NET1707_A02.Data.FuminiHotelManagementContext _context;
+        private readonly RoomInformationService _roomInformationService;
 
-        public DeleteModel(NguyenHoangSon_NET1707_A02.Data.FuminiHotelManagementContext context)
+        public DeleteModel(RoomInformationService roomInformationService)
         {
-            _context = context;
+            _roomInformationService = roomInformationService;
         }
 
         [BindProperty]
@@ -29,7 +31,7 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Cart
                 return NotFound();
             }
 
-            var roominformation = await _context.RoomInformations.Include(m => m.RoomType).FirstOrDefaultAsync(m => m.RoomId == id);
+            var roominformation = await _roomInformationService.GetRoomInformationByQueryable(m => m.RoomId == id);
 
             if (roominformation == null)
             {
@@ -50,9 +52,7 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Cart
             }
 
             // Fetch the room information based on the provided id
-            var roominformation = await _context.RoomInformations
-                                                .Include(m => m.RoomType)
-                                                .SingleOrDefaultAsync(m => m.RoomId == id);
+            var roominformation = await _roomInformationService.GetRoomInformationByQueryable(m => m.RoomId == id);
 
             if (roominformation != null && Session.carts != null)
             {

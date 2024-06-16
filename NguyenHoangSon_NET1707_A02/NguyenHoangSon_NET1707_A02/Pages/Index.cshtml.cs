@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using NguyenHoangSon_NET1707_A02.Data;
-using NguyenHoangSon_NET1707_A02.Models.Views;
+
+using FHS.BusinessLogic.Views;
 
 namespace NguyenHoangSon_NET1707_A02.Pages
 {

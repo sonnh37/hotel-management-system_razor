@@ -88,7 +88,8 @@
     @if (HttpContext.Session.GetString("Role") != null)
     {
         <a asp-page="./Edit" asp-route-id="@Model.BookingReservation.BookingReservationId">Edit</a>
+        <a asp-page="./Index">Back to List</a>
     }
 
-    <a asp-page="./Index">Back to List</a>
+    <a href="/bookingreservations/index">Back to List</a>
 </div>

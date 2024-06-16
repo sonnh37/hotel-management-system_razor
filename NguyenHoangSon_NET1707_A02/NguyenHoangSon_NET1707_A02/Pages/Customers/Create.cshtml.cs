@@ -6,20 +6,21 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using NguyenHoangSon_NET1707_A02.Data;
-using NguyenHoangSon_NET1707_A02.Models;
-using NguyenHoangSon_NET1707_A02.Models.Views;
+
+using FHS.DataAccess.Entities;
+using FHS.BusinessLogic.Views;
+using FHS.BusinessLogic.Services;
 
 namespace NguyenHoangSon_NET1707_A02.Pages.Customers
 {
     public class CreateModel : PageModel
     {
-        private readonly FuminiHotelManagementContext _context;
+        private readonly CustomerService _customerService;
         private readonly IMapper _mapper;
 
-        public CreateModel(FuminiHotelManagementContext context, IMapper mapper)
+        public CreateModel(CustomerService customerService, IMapper mapper)
         {
-            _context = context;
+            _customerService = customerService;
             _mapper = mapper;
         }
 
@@ -39,9 +40,14 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Customers
                 return Page();
             }
 
-            _context.Customers.Add(_mapper.Map<Customer>(Customer));
-            await _context.SaveChangesAsync();
-
+            var customer = await _customerService.AddCustomer(_mapper.Map<Customer>(Customer));
+            
+            if (customer == null)
+            {
+                ModelState.AddModelError("", "Error while adding customer");
+                return Page();
+            }
+            TempData["Message"] = "Add Succesfully.";
             return RedirectToPage("./Index");
         }
     }

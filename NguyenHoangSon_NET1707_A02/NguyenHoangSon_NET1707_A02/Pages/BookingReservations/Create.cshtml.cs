@@ -6,26 +6,28 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using NguyenHoangSon_NET1707_A02.Data;
-using NguyenHoangSon_NET1707_A02.Models;
-using NguyenHoangSon_NET1707_A02.Models.Views;
+using FHS.DataAccess.Entities;
+using FHS.BusinessLogic.Views;
+using FHS.BusinessLogic.Services;
 
 namespace NguyenHoangSon_NET1707_A02.Pages.BookingReservations
 {
     public class CreateModel : PageModel
     {
-        private readonly FuminiHotelManagementContext _context;
+        private readonly CustomerService _customerService;
+        private readonly BookingReservationService _bookingReservationService;
         private readonly IMapper _mapper;
 
-        public CreateModel(FuminiHotelManagementContext context, IMapper mapper)
+        public CreateModel(CustomerService customerService, BookingReservationService bookingReservationService, IMapper mapper)
         {
-            _context = context;
+            _customerService = customerService;
+            _bookingReservationService = bookingReservationService;
             _mapper = mapper;
         }
 
-        public IActionResult OnGet()
+        public async Task<IActionResult> OnGetAsync()
         {
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerFullName");
+            ViewData["CustomerId"] = new SelectList(await _customerService.GetAllCustomer(), "CustomerId", "CustomerFullName");
             return Page();
         }
 
@@ -41,11 +43,15 @@ namespace NguyenHoangSon_NET1707_A02.Pages.BookingReservations
             }
             // count + 1
 
-            BookingReservation.BookingReservationId = _context.BookingReservations.Count() + 1;
+            BookingReservation.BookingReservationId = _bookingReservationService.GetAllBookingReservation().Result.Count() + 1;
 
-            _context.BookingReservations.Add(_mapper.Map<BookingReservation>(BookingReservation));
-            await _context.SaveChangesAsync();
-
+            var booking = await _bookingReservationService.AddBookingReservation(_mapper.Map<BookingReservation>(BookingReservation));
+            if (booking == null)
+            {
+                ModelState.AddModelError("", "Error while adding booking");
+                return Page();
+            }
+            TempData["Message"] = "Add Succesfully.";
             return RedirectToPage("./Index");
         }
     }

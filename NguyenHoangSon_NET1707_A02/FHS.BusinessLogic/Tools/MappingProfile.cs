@@ -1,8 +1,9 @@
-﻿using AutoMapper;
-using NguyenHoangSon_NET1707_A02.Models;
-using NguyenHoangSon_NET1707_A02.Models.Views;
+﻿
+using AutoMapper;
+using FHS.BusinessLogic.Views;
+using FHS.DataAccess.Entities;
 
-namespace NguyenHoangSon_NET1707_A02.Tools
+namespace FHS.BusinessLogic.Tools
 {
     public class MappingProfile : Profile
     {

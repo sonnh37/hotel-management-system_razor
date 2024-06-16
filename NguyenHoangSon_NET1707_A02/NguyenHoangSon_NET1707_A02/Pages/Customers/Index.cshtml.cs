@@ -5,26 +5,27 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using NguyenHoangSon_NET1707_A02.Data;
-using NguyenHoangSon_NET1707_A02.Models;
+
+using FHS.DataAccess.Entities;
+using FHS.BusinessLogic.Services;
 
 namespace NguyenHoangSon_NET1707_A02.Pages.Customers
 {
     
     public class IndexModel : PageModel
     {
-        private readonly NguyenHoangSon_NET1707_A02.Data.FuminiHotelManagementContext _context;
+        private readonly CustomerService _customerService;
 
-        public IndexModel(NguyenHoangSon_NET1707_A02.Data.FuminiHotelManagementContext context)
+        public IndexModel(CustomerService customerService)
         {
-            _context = context;
+            _customerService = customerService;
         }
 
         public IList<Customer> Customer { get; set; } = default!;
 
         public async Task OnGetAsync()
         {
-            Customer = await _context.Customers.ToListAsync();
+            Customer = await _customerService.GetAllCustomer();
         }
     }
 }

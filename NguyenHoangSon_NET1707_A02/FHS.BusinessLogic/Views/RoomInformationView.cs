@@ -1,4 +1,4 @@
-﻿namespace NguyenHoangSon_NET1707_A02.Models.Views
+﻿namespace FHS.BusinessLogic.Views
 {
     public class RoomInformationView
     {

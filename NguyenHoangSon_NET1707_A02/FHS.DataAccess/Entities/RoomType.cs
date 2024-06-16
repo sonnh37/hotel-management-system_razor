@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace NguyenHoangSon_NET1707_A02.Models;
+namespace FHS.DataAccess.Entities;
 
 public partial class RoomType
 {

@@ -5,18 +5,24 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using NguyenHoangSon_NET1707_A02.Data;
-using NguyenHoangSon_NET1707_A02.Models;
+
+using FHS.DataAccess.Entities;
+using AutoMapper;
+using FHS.BusinessLogic.Services;
 
 namespace NguyenHoangSon_NET1707_A02.Pages.BookingReservations
 {
     public class DetailsModel : PageModel
     {
-        private readonly NguyenHoangSon_NET1707_A02.Data.FuminiHotelManagementContext _context;
+        private readonly BookingReservationService _bookingReservationService;
+        private readonly BookingDetailService _bookingDetailService;
+        private readonly IMapper _mapper;
 
-        public DetailsModel(NguyenHoangSon_NET1707_A02.Data.FuminiHotelManagementContext context)
+        public DetailsModel(BookingDetailService bookingDetailService, BookingReservationService bookingReservationService, IMapper mapper)
         {
-            _context = context;
+            _bookingReservationService = bookingReservationService;
+            _bookingDetailService = bookingDetailService;
+            _mapper = mapper;
         }
 
         public BookingReservation BookingReservation { get; set; } = default!;
@@ -30,9 +36,7 @@ namespace NguyenHoangSon_NET1707_A02.Pages.BookingReservations
                 return NotFound();
             }
 
-            var bookingreservation = await _context.BookingReservations
-                .Include(m => m.Customer)
-                .FirstOrDefaultAsync(m => m.BookingReservationId == id);
+            var bookingreservation = await _bookingReservationService.GetBookingReservationByQueryable(m => m.BookingReservationId == id);
             if (bookingreservation == null)
             {
                 return NotFound();
@@ -40,9 +44,11 @@ namespace NguyenHoangSon_NET1707_A02.Pages.BookingReservations
             else
             {
                 BookingReservation = bookingreservation;
-                BookingDetail = await _context.BookingDetails.Where(m => m.BookingReservationId == bookingreservation.BookingReservationId)
-                .Include(b => b.BookingReservation)
-                .Include(b => b.Room).ToListAsync();
+                BookingDetail = await _bookingDetailService.GetBookingDetailListByQueryable(m => m.BookingReservationId == bookingreservation.BookingReservationId);
+                if (BookingDetail == null)
+                {
+                    BookingDetail = new List<BookingDetail>();
+                }
             }
             return Page();
         }
