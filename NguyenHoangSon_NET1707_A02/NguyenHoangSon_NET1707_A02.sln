@@ -5,9 +5,9 @@ VisualStudioVersion = 17.10.34928.147
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NguyenHoangSon_NET1707_A02", "NguyenHoangSon_NET1707_A02\NguyenHoangSon_NET1707_A02.csproj", "{0B5541A7-3441-4838-AB58-82267383389A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FHS.BusinessLogic", "FHS.BusinessLogic\FHS.BusinessLogic.csproj", "{6E0224DC-F6E9-4951-8FA6-FECA8D5D197D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FHS.BusinessLogic", "FHS.BusinessLogic\FHS.BusinessLogic.csproj", "{6E0224DC-F6E9-4951-8FA6-FECA8D5D197D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FHS.DataAccess", "FHS.DataAccess\FHS.DataAccess.csproj", "{201CA8A3-4830-4F24-B8BB-169E6D1F9A31}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FHS.DataAccess", "FHS.DataAccess\FHS.DataAccess.csproj", "{201CA8A3-4830-4F24-B8BB-169E6D1F9A31}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
