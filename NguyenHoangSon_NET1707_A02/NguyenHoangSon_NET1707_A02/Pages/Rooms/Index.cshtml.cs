@@ -28,15 +28,37 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Rooms
 
         public IList<RoomInformation> RoomInformation { get;set; } = default!;
 
+        [BindProperty]
+        public int totalPages { get; set; } = 1;
+
+        [BindProperty]
+        public int pageNumber { get; set; } = 1;
+
+        public int pageSize { get; set; } = 10;
+
+        [BindProperty]
         public string txtSearch { get;set; }
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(int pageNumber = 1)
         {
-            RoomInformation = await _roomInformationService.GetAllRoomInformation();
+            this.pageNumber = pageNumber;
+            await GetAll(pageNumber);
+        }
+
+        public async Task GetAll(int pageNumber = 1)
+        {
+            var item = await _roomInformationService.GetAllRoomInformation(pageNumber, this.pageSize);
+            RoomInformation = item.Item1;
+            totalPages = item.Item2;
         }
 
         public async Task<IActionResult> OnPostAsync(int id)
         {
+            if (!string.IsNullOrEmpty(txtSearch))
+            {
+                return await OnPostSearchAsync(txtSearch);
+            }
+
             // Fetch the room information based on the provided id
             var roomInformation = await _roomInformationService.GetRoomInformationByQueryable(m => m.RoomId == id);
 
@@ -74,8 +96,11 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Rooms
                 return Page();
             }
 
+            this.pageNumber = pageNumber;
             this.txtSearch = txtSearch;
-            RoomInformation = await _roomInformationService.GetRoomInformationListByQueryable(m => m.RoomDetailDescription.ToLower().Trim().Contains(txtSearch.ToLower().Trim()));
+            var item = await _roomInformationService.GetRoomInformationListByQueryable(m => m.RoomDetailDescription.ToLower().Trim().Contains(txtSearch.ToLower().Trim()), this.pageNumber, this.pageSize);
+            RoomInformation = item.Item1;
+            totalPages = item.Item2;
 
             return Page();
         }

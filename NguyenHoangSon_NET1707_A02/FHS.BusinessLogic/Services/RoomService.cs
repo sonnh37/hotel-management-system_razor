@@ -90,19 +90,22 @@ namespace FHS.BusinessLogic.Services
             }
         }
 
-        public async Task<IList<RoomInformation>> GetAllRoomInformation()
+        public async Task<(IList<RoomInformation>, int)> GetAllRoomInformation(int pageNumber, int pageSize)
         {
             try
             {
                 IQueryable<RoomInformation> queryable = _repository.GetQueryable(m => m.RoomStatus != Convert.ToByte(2));
+
                 if (queryable.Any())
                 {
-                    return await queryable
-                        .Include(m => m.RoomType)
-                        .ToListAsync();
+                    queryable = queryable.Include(m => m.RoomType).OrderBy(m => m.RoomNumber);
                 }
 
-                return null;
+                var totalRecords = queryable.Count();
+                var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+                var list = await queryable.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
+                return (list, totalPages);
             }
             catch (Exception)
             {
@@ -119,13 +122,20 @@ namespace FHS.BusinessLogic.Services
                     .SingleOrDefaultAsync();
         }
 
-        public async Task<List<RoomInformation>> GetRoomInformationListByQueryable(Expression<Func<RoomInformation, bool>> predicate)
+        public async Task<(List<RoomInformation>, int)> GetRoomInformationListByQueryable(Expression<Func<RoomInformation, bool>> predicate, int pageNumber, int pageSize)
         {
             IQueryable<RoomInformation> queryable = _repository.GetQueryable(predicate);
 
-            return await queryable
-                    .Include(m => m.RoomType)
-                    .ToListAsync();
+            if (queryable.Any())
+            {
+                queryable = queryable.Include(m => m.RoomType).OrderBy(m => m.RoomNumber);
+            }
+
+            var totalRecords = queryable.Count();
+            var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+            var list = await queryable.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            return (list, totalPages);
         }
     }
 }

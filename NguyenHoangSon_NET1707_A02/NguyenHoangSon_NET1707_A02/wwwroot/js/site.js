@@ -1,11 +1,11 @@
 ﻿$(() => {
-    LoadProdData();
     var connection = new signalR.HubConnectionBuilder()
         .configureLogging(signalR.LogLevel.Debug)
         .withUrl("/signalRServer", {
             skipNegotiation: true,
             transport: signalR.HttpTransportType.WebSockets
         }).build();
+
     connection.start().then(function () {
         console.log('Connected!');
     }).catch(function (err) {
@@ -14,14 +14,15 @@
 
     connection.on("LoadProducts", function () {
         LoadProdData();
-    })
+    });
 
     LoadProdData();
 
     function LoadProdData() {
+        var pageNumber = $('#pageNumber').val();
         var tr = '';
         $.ajax({
-            url: '/RoomInformations/?handler=GetData',
+            url: '/RoomInformations/?handler=SignalR&pageNumber=' + pageNumber,
             dataType: 'json',
             method: 'GET',
             success: (result) => {
@@ -39,8 +40,8 @@
                             <a href='../Products/Details?id=${v.RoomId}'> Details </a> | 
                             <a href='../Products/Delete?id=${v.RoomId}'> Delete </a>
                         </td>
-                        </tr>`
-                })
+                    </tr>`;
+                });
                 console.log(tr);
                 $("#tableBody").html(tr);
             },
@@ -50,9 +51,6 @@
                 console.error("Status Text: ", error.statusText);
                 console.error("Response Text: ", error.responseText);
             }
-
         });
     }
-}
-
-)
+});

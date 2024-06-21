@@ -5,6 +5,11 @@
     ViewData["Title"] = "Room List";
 }
 
+<form method="get">
+    <input type="hidden" asp-for="pageNumber" id="pageNumber" value="@Model.pageNumber" />
+    <!-- Other form elements -->
+</form>
+
 <h1>Room List</h1>
 
 <p>
@@ -42,6 +47,16 @@
         </tr>
     </thead>
     <tbody id="tableBody"></tbody>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="@Url.Action("Index", new { pageNumber = (Model.pageNumber - 1) == 0 ? 1 : (Model.pageNumber - 1) })">Previous</a></li>
+            @for (int i = 1; i <= Model.totalPages; i++)
+            {
+                <li class="page-item"><a class="page-link" href="@Url.Action("Index", new { pageNumber = i })">@i</a></li>
+            }
+            <li class="page-item"><a class="page-link" href="@Url.Action("Index", new { pageNumber = (Model.pageNumber + 1) > Model.totalPages ? Model.pageNumber : (Model.pageNumber + 1) })">Next</a></li>
+        </ul>
+    </nav>
     @* <tbody>
         @foreach (var item in Model.RoomInformation)
         {

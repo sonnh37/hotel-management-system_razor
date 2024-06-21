@@ -2,9 +2,10 @@
     flex-direction: row;
     max-width: 40em;
     border: 0;
-    background-color: #d1d5db;
+    background-color: #ffffff;
     color: rgb(0, 0, 0);
-    box-shadow: 0 7px 7px rgba(0, 0, 0, 0.18);
+    border: 1px solid #cccccc;
+    border-radius: 8px;
     margin-bottom: 15px;
 }
 
@@ -27,8 +28,13 @@
 
 {
     text-decoration: none !important;
-    color: black !important;
+    font-size: 20px;
 }
+}
+
+    .text-section a:hover {
+    text-decoration: underline !important;
+    color: #0056b3; /* Hover link color */
 }
 
 
@@ -69,6 +75,7 @@ h4 {
 
 .card-text {
     letter-spacing: 0.1em;
+    font-size: 12px;
 }
 
 .search {

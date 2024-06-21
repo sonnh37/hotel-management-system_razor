@@ -29,21 +29,37 @@ namespace NguyenHoangSon_NET1707_A02.Pages.RoomInformations
 
         public IList<RoomInformation> RoomInformation { get;set; } = default!;
 
-        public JsonResult OnGetGetData()
+        [BindProperty]
+        public int totalPages { get; set; } = 1;
+
+        [BindProperty]
+        public int pageNumber { get; set; } = 1;
+
+        public int pageSize { get; set; } = 5;
+
+        public JsonResult OnGetSignalR(int pageNumber = 1)
         {
-            RoomInformation = _roomInformationService.GetAllRoomInformation().Result;
+            GetAll(pageNumber).Wait();
             var options = new JsonSerializerOptions
             {
                 ReferenceHandler = ReferenceHandler.IgnoreCycles,
                 WriteIndented = true
             };
+
             return new JsonResult(RoomInformation, options);
         }
-        public async Task OnGetAsync()
+
+        public async Task OnGetAsync(int pageNumber = 1)
         {
-            RoomInformation = await _roomInformationService.GetAllRoomInformation();
-            // return RoomInformation;
+            this.pageNumber = pageNumber;
+            await GetAll(pageNumber);
         }
 
+        public async Task GetAll(int pageNumber)
+        {
+            var item = await _roomInformationService.GetAllRoomInformation(pageNumber, this.pageSize);
+            RoomInformation = item.Item1;
+            totalPages = item.Item2;
+        }
     }
 }

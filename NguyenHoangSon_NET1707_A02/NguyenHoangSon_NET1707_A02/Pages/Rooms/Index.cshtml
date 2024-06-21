@@ -5,6 +5,11 @@
     ViewData["Title"] = "Index";
 }
 
+<form method="get">
+    <input type="hidden" asp-for="pageNumber" id="pageNumber" value="@Model.pageNumber" />
+    <!-- Other form elements -->
+</form>
+
 <section>
     <div class="container my-5">
         @* <header class="mb-4">
@@ -53,8 +58,8 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="text-section">
-                                <a asp-page="/roominformations/details" asp-route-id="@item.RoomId" class="card-title fw-bold">#@Html.DisplayFor(modelItem => item.RoomNumber)</a>
-                                <p style="card-text" title="@Html.DisplayFor(modelItem => item.RoomDetailDescription)">
+                                <a asp-page="/roominformations/details" asp-route-id="@item.RoomId" class="card-title fw-bold text-primary">#@Html.DisplayFor(modelItem => item.RoomNumber)</a>
+                                <p class="card-text" title="@Html.DisplayFor(modelItem => item.RoomDetailDescription)">
                                     @Html.DisplayFor(modelItem => item.RoomDetailDescription)
                                 </p>
                             </div>
@@ -83,6 +88,16 @@
 
                 </div>
             }
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item"><a class="page-link" href="@Url.Action("Index", new { pageNumber = (Model.pageNumber - 1) == 0 ? 1 : (Model.pageNumber - 1) })">Previous</a></li>
+                    @for (int i = 1; i <= Model.totalPages; i++)
+                    {
+                        <li class="page-item"><a class="page-link" href="@Url.Action("Index", new { pageNumber = i })">@i</a></li>
+                    }
+                    <li class="page-item"><a class="page-link" href="@Url.Action("Index", new { pageNumber = (Model.pageNumber + 1) > Model.totalPages ? Model.pageNumber : (Model.pageNumber + 1) })">Next</a></li>
+                </ul>
+            </nav>
         </div>
 
     </div>
