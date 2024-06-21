@@ -113,27 +113,19 @@ namespace FHS.BusinessLogic.Services
         public async Task<RoomInformation> GetRoomInformationByQueryable(Expression<Func<RoomInformation, bool>> predicate)
         {
             IQueryable<RoomInformation> queryable = _repository.GetQueryable(predicate);
-            if (queryable.Any())
-            {
-                return await queryable
+
+            return await queryable
                     .Include(m => m.RoomType)
                     .SingleOrDefaultAsync();
-            }
-
-            return null;
         }
 
         public async Task<List<RoomInformation>> GetRoomInformationListByQueryable(Expression<Func<RoomInformation, bool>> predicate)
         {
             IQueryable<RoomInformation> queryable = _repository.GetQueryable(predicate);
-            if (queryable.Any())
-            {
-                return await queryable
+
+            return await queryable
                     .Include(m => m.RoomType)
                     .ToListAsync();
-            }
-
-            return null;
         }
     }
 }

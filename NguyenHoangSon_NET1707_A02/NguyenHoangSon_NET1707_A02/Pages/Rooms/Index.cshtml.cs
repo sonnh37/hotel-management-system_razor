@@ -28,6 +28,8 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Rooms
 
         public IList<RoomInformation> RoomInformation { get;set; } = default!;
 
+        public string txtSearch { get;set; }
+
         public async Task OnGetAsync()
         {
             RoomInformation = await _roomInformationService.GetAllRoomInformation();
@@ -61,6 +63,20 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Rooms
             Session.carts.Add(roomInformation);
             TempData["Message"] = ($"Room {roomInformation.RoomNumber} added to cart successfully!");
             await OnGetAsync();
+            return Page();
+        }
+
+        public async Task<IActionResult> OnPostSearchAsync(string txtSearch)
+        {
+            if (string.IsNullOrEmpty(txtSearch))
+            {
+                await OnGetAsync();
+                return Page();
+            }
+
+            this.txtSearch = txtSearch;
+            RoomInformation = await _roomInformationService.GetRoomInformationListByQueryable(m => m.RoomDetailDescription.ToLower().Trim().Contains(txtSearch.ToLower().Trim()));
+
             return Page();
         }
     }

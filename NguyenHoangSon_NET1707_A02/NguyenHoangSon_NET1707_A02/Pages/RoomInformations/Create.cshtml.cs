@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using FHS.DataAccess.Entities;
 using FHS.BusinessLogic.Views;
 using FHS.BusinessLogic.Services;
+using Microsoft.AspNetCore.SignalR;
+using NguyenHoangSon_NET1707_A02.Hubs;
 
 namespace NguyenHoangSon_NET1707_A02.Pages.RoomInformations
 {
@@ -17,12 +19,13 @@ namespace NguyenHoangSon_NET1707_A02.Pages.RoomInformations
         private readonly RoomInformationService _roomInformationService;
         private readonly RoomTypeService _roomTypeService;
         private readonly IMapper _mapper;
-
-        public CreateModel(RoomInformationService roomInformationService, RoomTypeService roomTypeService, IMapper mapper)
+        private readonly IHubContext<SignalRServer> _signalRHub;
+        public CreateModel(RoomInformationService roomInformationService, RoomTypeService roomTypeService, IMapper mapper, IHubContext<SignalRServer> signalRHub)
         {
             _roomInformationService = roomInformationService;
             _roomTypeService = roomTypeService;
             _mapper = mapper;
+            _signalRHub = signalRHub;
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -49,6 +52,7 @@ namespace NguyenHoangSon_NET1707_A02.Pages.RoomInformations
                 return Page();
             }
             TempData["Message"] = "Add Succesfully";
+            await _signalRHub.Clients.All.SendAsync("LoadProducts");
             return RedirectToPage("./Index");
         }
     }

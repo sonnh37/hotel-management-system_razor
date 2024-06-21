@@ -19,6 +19,7 @@ builder.Services.AddSignalR();
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.PropertyNamingPolicy = null;
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
 });
 
 builder.Services.AddDbContext<FuminiHotelManagementContext>(options =>
@@ -90,7 +91,14 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-app.MapHub<SignalRServer>("/signalRServer");
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapRazorPages();
+    endpoints.MapControllers();
+    endpoints.MapHub<SignalRServer>("/signalRServer");
+});
+
+//app.MapHub<SignalRServer>("/signalRServer");
 app.MapRazorPages();
 
 using (var scope = app.Services.CreateScope())
