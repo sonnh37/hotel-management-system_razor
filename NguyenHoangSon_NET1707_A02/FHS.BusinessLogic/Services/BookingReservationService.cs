@@ -103,7 +103,29 @@ namespace FHS.BusinessLogic.Services
                         .ToListAsync();
                 }
 
-                return null;
+                return [];
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<(IList<BookingReservation>, int)> GetAllBookingReservation(int pageNumber, int pageSize)
+        {
+            try
+            {
+                IQueryable<BookingReservation> queryable = _repository.GetQueryable(m => m.BookingStatus != Convert.ToByte(2));
+                if (queryable.Any())
+                {
+                    queryable = queryable.Include(m => m.Customer).Include(m => m.BookingDetails).OrderByDescending(m => m.BookingDate);
+                }
+
+                var totalRecords = queryable.Count();
+                var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+                var list = await queryable.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
+                return (list, totalPages);
             }
             catch (Exception)
             {
@@ -125,18 +147,37 @@ namespace FHS.BusinessLogic.Services
             return null;
         }
 
-        public async Task<List<BookingReservation>> GetBookingReservationListByQueryable(Expression<Func<BookingReservation, bool>> predicate)
+        //public async Task<(BookingReservation, int)> GetBookingReservationByQueryable(Expression<Func<BookingReservation, bool>> predicate, int pageNumber, int pageSize)
+        //{
+        //    IQueryable<BookingReservation> queryable = _repository.GetQueryable(predicate);
+        //    if (queryable.Any())
+        //    {
+        //        queryable = queryable
+        //            .Include(m => m.BookingDetails)
+        //            .Include(m => m.Customer);
+                    
+        //    }
+
+        //    var totalRecords = queryable.Count();
+        //    var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+        //    var bookingReservation = await queryable.Skip((pageNumber - 1) * pageSize).Take(pageSize).SingleOrDefaultAsync();
+
+        //    return (bookingReservation, totalPages);
+        //}
+
+        public async Task<(List<BookingReservation>, int)> GetBookingReservationListByQueryable(Expression<Func<BookingReservation, bool>> predicate, int pageNumber, int pageSize)
         {
             IQueryable<BookingReservation> queryable = _repository.GetQueryable(predicate);
             if (queryable.Any())
             {
-                return await queryable
-                    .Include(m => m.BookingDetails)
-                    .Include(m => m.Customer)
-                    .ToListAsync();
+                queryable = queryable.Include(m => m.Customer).Include(m => m.BookingDetails).OrderByDescending(m => m.BookingDate);
             }
 
-            return null;
+            var totalRecords = queryable.Count();
+            var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+            var list = await queryable.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            return (list, totalPages);
         }
     }
 }

@@ -102,7 +102,30 @@ namespace FHS.BusinessLogic.Services
                         .ToListAsync();
                 }
 
-                return null;
+                return [];
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<(IList<Customer>, int)> GetAllCustomer(int pageNumber, int pageSize)
+        {
+            try
+            {
+                IQueryable<Customer> queryable = _repository.GetQueryable(m => m.CustomerStatus != Convert.ToByte(2));
+                if (queryable.Any())
+                {
+                    queryable = queryable.Include(m => m.BookingReservations).OrderBy(m => m.CustomerFullName);
+                }
+
+                var totalRecords = queryable.Count();
+                var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+                var list = await queryable.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
+                return (list, totalPages);
+
             }
             catch (Exception)
             {

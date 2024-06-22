@@ -41,7 +41,7 @@ namespace NguyenHoangSon_NET1707_A02.Middleware
                     ) && EmailAddress != null && Role == null)
                 {
                     // allow
-                    if (path.StartsWith("/bookingreservations/index") || path.StartsWith("/bookingreservations/details")
+                    if (path.StartsWith("/bookingreservations")
                         || path.StartsWith("/roominformations/details")
                         )
                     {

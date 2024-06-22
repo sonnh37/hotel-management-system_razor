@@ -26,23 +26,39 @@ namespace NguyenHoangSon_NET1707_A02.Pages.BookingReservations
 
         public IList<BookingReservation> BookingReservation { get; set; } = default!;
 
-        public async Task OnGetAsync()
+        [BindProperty]
+        public int totalPages { get; set; } = 1;
+
+        [BindProperty]
+        public int pageNumber { get; set; } = 1;
+
+        public int pageSize { get; set; } = 5;
+
+        public async Task OnGetAsync(int pageNumber = 1)
         {
             if (HttpContext.Session.GetString("Role") != null)
             {
-                BookingReservation = await _bookingReservationService.GetAllBookingReservation();
+                this.pageNumber = pageNumber;
+                await GetAll(pageNumber);
             }
             else
             {
                 var email = HttpContext.Session.GetString("Username").ToLower().ToString();
                 Customer customer = await _customerService.GetCustomerByQueryable(m => m.EmailAddress == email);
-                BookingReservation = await _bookingReservationService.GetBookingReservationListByQueryable(m => m.CustomerId == customer.CustomerId && m.BookingStatus == Convert.ToByte(1));
-                if (BookingReservation == null)
-                {
-                    BookingReservation = new List<BookingReservation>();
-                }
+
+                this.pageNumber = pageNumber;
+                var item = await _bookingReservationService.GetBookingReservationListByQueryable(m => m.CustomerId == customer.CustomerId && m.BookingStatus == Convert.ToByte(1), pageNumber, pageSize);
+                BookingReservation = item.Item1;
+                totalPages = item.Item2;
             }
 
+        }
+
+        public async Task GetAll(int pageNumber)
+        {
+            var item = await _bookingReservationService.GetAllBookingReservation(pageNumber, this.pageSize);
+            BookingReservation = item.Item1;
+            totalPages = item.Item2;
         }
     }
 }

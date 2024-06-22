@@ -56,18 +56,19 @@ namespace FHS.BusinessLogic.Services
             return null;
         }
 
-        public async Task<List<BookingDetail>> GetBookingDetailListByQueryable(Expression<Func<BookingDetail, bool>> predicate)
+        public async Task<(List<BookingDetail>, int)> GetBookingDetailListByQueryable(Expression<Func<BookingDetail, bool>> predicate, int pageNumber, int pageSize)
         {
             IQueryable<BookingDetail> queryable = _repository.GetQueryable(predicate);
             if (queryable.Any())
             {
-                return await queryable
-                    .Include(m => m.BookingReservation)
-                    .Include(m => m.Room)
-                    .ToListAsync();
+                queryable = queryable.Include(m => m.Room).Include(m => m.BookingReservation).OrderBy(m => m.RoomId);
             }
 
-            return null;
+            var totalRecords = queryable.Count();
+            var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+            var list = await queryable.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            return (list, totalPages);
         }
     }
 }

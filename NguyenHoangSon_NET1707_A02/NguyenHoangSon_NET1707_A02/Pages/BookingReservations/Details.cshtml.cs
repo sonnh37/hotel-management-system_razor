@@ -29,7 +29,15 @@ namespace NguyenHoangSon_NET1707_A02.Pages.BookingReservations
 
         public IList<BookingDetail> BookingDetail { get; set; } = default!;
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        [BindProperty]
+        public int totalPages { get; set; } = 1;
+
+        [BindProperty]
+        public int pageNumber { get; set; } = 1;
+
+        public int pageSize { get; set; } = 5;
+
+        public async Task<IActionResult> OnGetAsync(int? id, int pageNumber = 1)
         {
             if (id == null)
             {
@@ -43,8 +51,11 @@ namespace NguyenHoangSon_NET1707_A02.Pages.BookingReservations
             }
             else
             {
+                this.pageNumber = pageNumber;
                 BookingReservation = bookingreservation;
-                BookingDetail = await _bookingDetailService.GetBookingDetailListByQueryable(m => m.BookingReservationId == bookingreservation.BookingReservationId);
+                var item = await _bookingDetailService.GetBookingDetailListByQueryable(m => m.BookingReservationId == bookingreservation.BookingReservationId, this.pageNumber, pageSize);
+                BookingDetail = item.Item1;
+                totalPages = item.Item2;
                 if (BookingDetail == null)
                 {
                     BookingDetail = new List<BookingDetail>();

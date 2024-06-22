@@ -62,7 +62,7 @@
                     }
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Customer.CustomerFullName)
+                    @Html.DisplayFor(modelItem => item.Customer.EmailAddress)
                 </td>
 
                 @if (HttpContext.Session.GetString("Role") != null)
@@ -85,3 +85,48 @@
         }
     </tbody>
 </table>
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-end">
+        @if (Model.pageNumber <= 1)
+        {
+            <li class="page-item disabled"><a class="page-link" href="@Url.Action("Index", new { pageNumber = 1 })">First</a></li>
+            <li class="page-item disabled"><a class="page-link" href="@Url.Action("Index", new { pageNumber = 1 })">Previous</a></li>
+
+        }
+        else
+        {
+            <li class="page-item"><a class="page-link" href="@Url.Action("Index", new { pageNumber = 1 })">First</a></li>
+            <li class="page-item"><a class="page-link" href="@Url.Action("Index", new { pageNumber = (Model.pageNumber - 1) })">Previous</a></li>
+        }
+
+        @for (int i = 1; i <= Model.totalPages; i++)
+        {
+            @if (Model.pageNumber == i)
+            {
+                if (Model.pageNumber > 1)
+                {
+                    <li class="page-item"><a class="page-link" href="@Url.Action("Index", new { pageNumber = i-1 })">@(i - 1)</a></li>
+                }
+                <li class="page-item active" aria-current="page"><a class="page-link" href="@Url.Action("Index", new { pageNumber = i })">@i</a></li>
+                @if (Model.pageNumber < Model.totalPages)
+                {
+                    <li class="page-item"><a class="page-link" href="@Url.Action("Index", new { pageNumber = i+1 })">@(i + 1)</a></li>
+                }
+                break;
+            }
+
+        }
+        @if ((Model.pageNumber) >= Model.totalPages)
+        {
+            <li class="page-item disabled"><a class="page-link" href="@Url.Action("Index", new { pageNumber = Model.pageNumber })">Next</a></li>
+            <li class="page-item disabled"><a class="page-link" href="@Url.Action("Index", new { pageNumber = Model.totalPages })">Last</a></li>
+
+        }
+        else
+        {
+            <li class="page-item"><a class="page-link" href="@Url.Action("Index", new { pageNumber = (Model.pageNumber + 1) })">Next</a></li>
+            <li class="page-item"><a class="page-link" href="@Url.Action("Index", new { pageNumber = Model.totalPages })">Last</a></li>
+        }
+    </ul>
+</nav>
