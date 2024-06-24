@@ -9,6 +9,7 @@ namespace FHS.DataAccess.Contracts
         public void Update(T _object);
         public Task<IList<T>> GetAll();
         public IQueryable<T> GetQueryable(Expression<Func<T, bool>> predicate);
+        public IQueryable<T> GetQueryable<T>() where T : class;
         public Task CreateRange(List<T> _objects);
     }
 }

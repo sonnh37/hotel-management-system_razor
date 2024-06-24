@@ -63,11 +63,22 @@
                         <span>Deleted</span>
                     }
                 </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.CustomerId">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.CustomerId">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.CustomerId">Delete</a>
-            </td>
+                <td style="width: 20%">
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <form class="btn-group" action="/Customers/Edit" method="get">
+                            <input type="hidden" name="id" value="@item.CustomerId" />
+                            <button type="submit" class="btn btn-warning">Edit</button>
+                        </form>
+                        <form class="btn-group" action="/Customers/Details" method="get">
+                            <input type="hidden" name="id" value="@item.CustomerId" />
+                            <button type="submit" class="btn btn-success">Detail</button>
+                        </form>
+                        <form class="btn-group" action="/Customers/Delete" method="get">
+                            <input type="hidden" name="id" value="@item.CustomerId" />
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </td>
         </tr>
 }
     </tbody>

@@ -6,6 +6,7 @@ using FHS.DataAccess.Entities;
 using FHS.DataAccess.Entities.InitData;
 using FHS.DataAccess.Repositories;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using NguyenHoangSon_NET1707_A02.Hubs;
@@ -14,7 +15,10 @@ using NguyenHoangSon_NET1707_A02.Middleware;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages(o =>
+{
+    o.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute());
+});
 builder.Services.AddSignalR();
 builder.Services.AddControllers().AddJsonOptions(options =>
 {

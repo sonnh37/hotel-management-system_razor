@@ -26,7 +26,6 @@
             dataType: 'json',
             method: 'GET',
             success: (result) => {
-                console.log(result);
                 $.each(result, (k, v) => {
                     tr += `<tr>
                         <td> ${v.RoomId} </td> 
@@ -35,10 +34,21 @@
                         <td> ${v.RoomMaxCapacity} </td>
                         <td> ${v.RoomStatus} </td>
                         <td> ${v.RoomPricePerDay} </td>
-                        <td>
-                            <a href='../Products/Edit?id=${v.RoomId}'> Edit </a> | 
-                            <a href='../Products/Details?id=${v.RoomId}'> Details </a> | 
-                            <a href='../Products/Delete?id=${v.RoomId}'> Delete </a>
+                        <td style="width: 20%">
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <form class="btn-group"  action="/RoomInformations/Edit" method="get" >
+                                    <input type="hidden" name="id" value="${v.RoomId}" />
+                                    <button type="submit" class="btn btn-warning">Edit</button>
+                                </form>
+                                <form class="btn-group" action="/RoomInformations/Details" method="get" >
+                                    <input type="hidden" name="id" value="${v.RoomId}" />
+                                    <button type="submit" class="btn btn-success">Detail</button>
+                                </form>
+                                <form class="btn-group" action="/RoomInformations/Delete" method="get" >
+                                    <input type="hidden" name="id" value="${v.RoomId}" />
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                            </div>
                         </td>
                     </tr>`;
                 });

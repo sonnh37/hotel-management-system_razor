@@ -94,7 +94,7 @@ namespace FHS.BusinessLogic.Services
         {
             try
             {
-                IQueryable<RoomInformation> queryable = _repository.GetQueryable(m => m.RoomStatus != Convert.ToByte(2));
+                IQueryable<RoomInformation> queryable = _repository.GetQueryable(m => m.RoomStatus == Convert.ToByte(1));
 
                 if (queryable.Any())
                 {

@@ -94,7 +94,7 @@ namespace FHS.BusinessLogic.Services
         {
             try
             {
-                IQueryable<Customer> queryable = _repository.GetQueryable(m => m.CustomerStatus != Convert.ToByte(2));
+                IQueryable<Customer> queryable = _repository.GetQueryable(m => m.CustomerStatus == Convert.ToByte(1));
                 if (queryable.Any())
                 {
                     return await queryable
@@ -114,7 +114,7 @@ namespace FHS.BusinessLogic.Services
         {
             try
             {
-                IQueryable<Customer> queryable = _repository.GetQueryable(m => m.CustomerStatus != Convert.ToByte(2));
+                IQueryable<Customer> queryable = _repository.GetQueryable(m => m.CustomerStatus == Convert.ToByte(1));
                 if (queryable.Any())
                 {
                     queryable = queryable.Include(m => m.BookingReservations).OrderBy(m => m.CustomerFullName);

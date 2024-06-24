@@ -16,84 +16,216 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-
                     <button type="submit" class="btn btn-primary">Checkout</button>
                 </div>
             </div>
         </div>
     </div>
-    
-    <h1>Cart List</h1>
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    @if (TempData["Message"] != null)
-    {
-        <div class="alert alert-success">
-            @TempData["Message"]
-        </div>
-    }
-    <div class="d-flex justify-content-end align-items-center">
-        <div class="d-flex align-items-center flex-row" style="margin-right: 10px;">
-            <div class="d-flex align-items-center me-5">
-                <label style="font-size: 10px; margin-right: 10px" for="startDate">Start Date</label>
-                <input type="date" asp-for="DateView.StartDate" id="startDate" class="form-control" required>
-            </div>
-            <div class="d-flex align-items-center">
-                <label style="font-size: 10px; margin-right: 10px" class="label" for="endDate">End Date</label>
-                <input type="date" asp-for="DateView.EndDate" id="endDate" class="form-control" required>
-            </div>
-        </div>
-        <button type="button" data-bs-toggle="modal" data-bs-target="#confirm-checkout" style="margin: 10px; padding: 5px 10px;" class="btn btn-warning">Checkout</button>
-    </div>
 </form>
-<table class="table table-hover table-bordered">
-    <thead class="bg-dark text-white">
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.RoomInformation[0].RoomNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RoomInformation[0].RoomDetailDescription)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RoomInformation[0].RoomMaxCapacity)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RoomInformation[0].RoomPricePerDay)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RoomInformation[0].RoomType)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.RoomInformation)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.RoomNumber)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.RoomDetailDescription)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.RoomMaxCapacity)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.RoomPricePerDay)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.RoomType.RoomTypeName)
-                </td>
-                <td>
-                    <a asp-page="./Delete" asp-route-id="@item.RoomId">Remove</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
 
-<div class="total-container d-flex justify-content-end align-items-center">
-    <div>Total:</div>
-    <div id="totalPrice" style="margin-left: 10px;">@Model.TotalPrice</div>
+<h1>Cart List</h1>
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Message"]
+    </div>
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.3.45/css/materialdesignicons.css" integrity="sha256-NAxhqDvtY0l4xn+YVa6WjAcmd94NNfttjNsDmNatFVc=" crossorigin="anonymous" />
+<link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+<div class="container">
+    <div class="row">
+        <div class="col-xl-8">
+            @for (int i = 0; i < Model.DateViews.Count; i++)
+            {
+                var item = Model.DateViews[i];
+                <div class="card border shadow-none">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start border-bottom pb-3">
+                            <div class="me-4">
+                                <img src="https://www.bootdey.com/image/380x380/008B8B/000000" alt class="avatar-lg rounded">
+                            </div>
+                            <div class="flex-grow-1 align-self-center overflow-hidden">
+                                <div>
+                                    <h5 class="text-truncate font-size-18">
+                                        <a asp-page="/roominformations/details" asp-route-id="@item.Room.RoomId" class="text-dark">@Html.DisplayFor(modelItem => item.Room.RoomNumber)</a>
+                                    </h5>
+                                    <p class="text-muted mb-0">
+                                        <i class="bx bxs-star text-warning"></i>
+                                        <i class="bx bxs-star text-warning"></i>
+                                        <i class="bx bxs-star text-warning"></i>
+                                        <i class="bx bxs-star text-warning"></i>
+                                        <i class="bx bxs-star-half text-warning"></i>
+                                    </p>
+                                    <p class="mb-0 mt-1">Type : <span class="fw-medium">@Html.DisplayFor(modelItem => item.Room.RoomType.RoomTypeName)</span></p>
+                                </div>
+                            </div>
+                            <div class="flex-shrink-0 ms-2">
+                                <ul class="list-inline mb-0 font-size-16">
+                                    <li class="list-inline-item">
+                                        <a href="#" class="text-muted px-1">
+                                            <a asp-page="./Delete" asp-route-id="@item.Room.RoomId"><i class="mdi mdi-trash-can-outline"></i></a>
+                                        </a>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <a href="#" class="text-muted px-1">
+                                            <i class="mdi mdi-heart-outline"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="mt-3">
+                                        <p class="text-muted mb-2">Price/day</p>
+                                        <h5 class="mb-0 mt-2">
+                                            <span class="text-muted me-2">
+                                                <del class="font-size-16 fw-normal">$9999</del>
+                                            </span>
+                                            $@Html.DisplayFor(modelItem => item.Room.RoomPricePerDay)
+                                        </h5>
+                                    </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="mt-3">
+                                        <p class="text-muted mb-2">Date</p>
+                                        <div class="d-inline-flex">
+                                            <div class="d-flex align-items-center flex-row" style="margin-right: 10px;">
+                                                <div class="d-flex align-items-center me-5">
+                                                    <label style="font-size: 10px; margin-right: 10px">Start Date</label>
+                                                    <input type="date" id="startDate_@i" class="form-control start-date" onchange="updateActualPrice(@i)" value="@Model.DateViews[i].StartDate.ToString("yyyy-MM-dd")" required>
+                                                </div>
+                                                <div class="d-flex align-items-center">
+                                                    <label style="font-size: 10px; margin-right: 10px">End Date</label>
+                                                    <input type="date" id="endDate_@i" class="form-control end-date" onchange="updateActualPrice(@i)" value="@Model.DateViews[i].EndDate.ToString("yyyy-MM-dd")" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row justify-content-md-end">
+                                <div class="col-md-2">
+                                    <div class="mt-3">
+                                        <p class="text-muted mb-2">Total</p>
+                                        <h5>$<span id="actualPrice_@i">@item.ActualPrice</span></h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="row my-4">
+                <div class="col-sm-6">
+                    <a href="/Rooms/Index" class="btn btn-link text-muted">
+                        <i class="mdi mdi-arrow-left me-1"></i> Continue Shopping
+                    </a>
+                </div>
+                <div class="col-sm-6">
+                    <form asp-page-handler="checkout" method="post">
+                    <div class="text-sm-end mt-2 mt-sm-0">
+                            <button type="button" data-bs-toggle="modal" data-bs-target="#confirm-checkout"
+                                    style="margin: 10px; padding: 5px 10px;" class="btn btn-success">
+                                <i class="mdi mdi-cart-outline me-1"></i>Checkout
+                            </button>
+                        @* <a href="ecommerce-checkout.html" class="btn btn-success">
+                            Checkout
+                        </a> *@
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4">
+            <div class="mt-5 mt-lg-0">
+                <div class="card border shadow-none">
+                    <div class="card-header bg-transparent border-bottom py-3 px-4">
+                        <h5 class="font-size-16 mb-0">Order Summary <span class="float-end"></span></h5>
+                    </div>
+                    <div class="card-body p-4 pt-2">
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+                                <tbody>
+                                    
+                                    <tr class="bg-light">
+                                        <th>Total :</th>
+                                        <td class="text-end">
+                                            <span id="totalPrice" class="fw-bold">
+                                                @Model.TotalPrice
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
+
+<!-- Your existing HTML code -->
+
+<script>
+    function updateActualPrice(index) {
+        // Fetch the selected dates
+        var startDate = document.getElementById(`startDate_${index}`).value;
+        var endDate = document.getElementById(`endDate_${index}`).value;
+        
+        var data = {
+            index: index,
+            startDate: startDate,
+            endDate: endDate
+        };
+        // Make an AJAX call to update ActualPrice based on the selected dates
+        $.ajax({
+            url: '/Cart/?handler=UpdateActualPrice',
+            contentType: "application/json; charset=utf-8",
+            dataType: 'json',
+            type: 'POST',
+            data: JSON.stringify(data),
+            success: function (response) {
+                // Update the ActualPrice displayed on the page
+                var actualPriceElement = document.getElementById(`actualPrice_${index}`);
+                if (actualPriceElement) {
+                    actualPriceElement.innerText = response.actualPrice;
+                }
+                updateTotalPrice();
+            },
+            error: function (xhr, status, error) {
+                var errorMessage = "An error occurred";
+                if (xhr.responseJSON && xhr.responseJSON.error) {
+                    errorMessage = xhr.responseJSON.error;
+                }
+
+                alert(errorMessage);
+
+                // Reset dates to today's date
+                if (xhr.responseJSON && xhr.responseJSON.resetStartDate && xhr.responseJSON.resetEndDate) {
+                    document.getElementById(`startDate_${index}`).value = xhr.responseJSON.resetStartDate;
+                    document.getElementById(`endDate_${index}`).value = xhr.responseJSON.resetEndDate;
+                }
+            }
+        });
+    }
+
+    function updateTotalPrice() {
+        var totalPrice = 0;
+        // Iterate through all actual price elements and sum them up
+        document.querySelectorAll('[id^="actualPrice_"]').forEach(function (priceElement) {
+            totalPrice += parseFloat(priceElement.innerText) || 0;
+        });
+        // Update the total price displayed on the page
+        document.getElementById('totalPrice').innerText = totalPrice.toFixed(2);
+    }
+
+    
+</script>

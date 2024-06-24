@@ -90,11 +90,17 @@ namespace FHS.BusinessLogic.Services
             }
         }
 
+        public async Task<int> GetMaxBookingIdAsync()
+        {
+            var maxId = await _repository.GetQueryable<BookingReservation>().MaxAsync(b => (int?)b.BookingReservationId) ?? 0;
+            return maxId;
+        }
+
         public async Task<IList<BookingReservation>> GetAllBookingReservation()
         {
             try
             {
-                IQueryable<BookingReservation> queryable = _repository.GetQueryable(m => m.BookingStatus != Convert.ToByte(2));
+                IQueryable<BookingReservation> queryable = _repository.GetQueryable(m => m.BookingStatus == Convert.ToByte(1));
                 if (queryable.Any())
                 {
                     return await queryable
@@ -115,7 +121,7 @@ namespace FHS.BusinessLogic.Services
         {
             try
             {
-                IQueryable<BookingReservation> queryable = _repository.GetQueryable(m => m.BookingStatus != Convert.ToByte(2));
+                IQueryable<BookingReservation> queryable = _repository.GetQueryable(m => m.BookingStatus == Convert.ToByte(1));
                 if (queryable.Any())
                 {
                     queryable = queryable.Include(m => m.Customer).Include(m => m.BookingDetails).OrderByDescending(m => m.BookingDate);
