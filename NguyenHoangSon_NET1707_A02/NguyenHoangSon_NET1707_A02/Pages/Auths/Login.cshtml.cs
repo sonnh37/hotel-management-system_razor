@@ -18,11 +18,13 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Auths
 
         private readonly CustomerService _customerService;
         private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
 
-        public LoginModel(CustomerService customerService, IMapper mapper)
+        public LoginModel(CustomerService customerService, IMapper mapper, IConfiguration configuration)
         {
             _customerService = customerService;
             _mapper = mapper;
+            _configuration = configuration;
         }
 
         public void OnGet()
@@ -32,34 +34,35 @@ namespace NguyenHoangSon_NET1707_A02.Pages.Auths
 
         public async Task<IActionResult> OnPostAsync()
         {
-            Customer user = null;
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            var account = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetSection("account");
-            if (LoginView.Email.ToLower().Equals(account["email"].ToLower()) && LoginView.Password.Equals(account["password"]))
+            var adminEmail = _configuration["Account:Email"];
+            var adminPassword = _configuration["Account:Password"];
+            Customer user = null;
+
+            if (LoginView.Email.Equals(adminEmail, System.StringComparison.OrdinalIgnoreCase) &&
+                LoginView.Password.Equals(adminPassword))
             {
                 HttpContext.Session.SetString("Role", "Admin");
-                user = new Customer();
-                user.EmailAddress = account["email"].ToLower();
+                user = new Customer { EmailAddress = adminEmail.ToLower().Trim() };
             }
             else
             {
-                user = await _customerService.GetCustomerByQueryable(m => m.EmailAddress == LoginView.Email && m.Password == LoginView.Password);
+                user = await _customerService.GetCustomerByQueryable(m =>
+                    m.EmailAddress == LoginView.Email && m.Password == LoginView.Password);
 
                 if (user == null)
                 {
                     ModelState.AddModelError("", "Invalid email or password.");
-
                     return Page();
                 }
             }
 
             HttpContext.Session.SetString("Username", user.EmailAddress);
-
-            return Redirect("/");
+            return RedirectToPage("/Index");
         }
     }
 }

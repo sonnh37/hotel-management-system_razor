@@ -33,8 +33,11 @@ builder.Services.AddDbContext<FuminiHotelManagementContext>(options =>
 });
     
 
+
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+builder.Services.AddSingleton<IConfiguration>(provider =>
+            new ConfigurationBuilder().AddJsonFile("appsettings.json").Build());
 builder.Services.AddScoped<IBaseRepository<BookingDetail>, BaseRepository<BookingDetail>>();
 builder.Services.AddScoped<IBaseRepository<BookingReservation>, BaseRepository<BookingReservation>>();
 builder.Services.AddScoped<IBaseRepository<Customer>, BaseRepository<Customer>>();

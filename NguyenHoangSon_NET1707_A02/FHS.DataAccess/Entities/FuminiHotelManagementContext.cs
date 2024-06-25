@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace FHS.DataAccess.Entities;
 
@@ -25,13 +26,25 @@ public partial class FuminiHotelManagementContext : DbContext
 
     public virtual DbSet<RoomType> RoomTypes { get; set; }
 
+    #region Config 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
         {
-            optionsBuilder.UseSqlServer("Data Source=.; Initial Catalog=FUMiniHotelManagement; Integrated Security=True; Trust Server Certificate=True;");
+            optionsBuilder.UseSqlServer(GetConnectionString());
         }
     }
+    private string GetConnectionString()
+    {
+        IConfiguration config = new ConfigurationBuilder()
+         .SetBasePath(Directory.GetCurrentDirectory())
+        .AddJsonFile("appsettings.json", true, true)
+        .Build();
+        var strConn = /*config["ConnectionStrings:DB"]*/ config.GetConnectionString("DefaultConnection");
+
+        return strConn;
+    }
+    #endregion
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<BookingDetail>(entity =>
