@@ -27,13 +27,14 @@
             method: 'GET',
             success: (result) => {
                 $.each(result, (k, v) => {
+                    var statusText = v.RoomStatus == 1 ? 'Active' : 'Deleted';
                     tr += `<tr>
-                        <td> ${v.RoomId} </td> 
                         <td> ${v.RoomNumber} </td> 
                         <td> ${v.RoomDetailDescription} </td>
                         <td> ${v.RoomMaxCapacity} </td>
-                        <td> ${v.RoomStatus} </td>
+                        <td><span>${statusText}</span></td>
                         <td> ${v.RoomPricePerDay} </td>
+                        <td> ${v.RoomType.RoomTypeName} </td>
                         <td style="width: 20%">
                             <div class="btn-group" role="group" aria-label="Basic example">
                                 <form class="btn-group"  action="/RoomInformations/Edit" method="get" >
